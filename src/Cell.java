@@ -1,5 +1,6 @@
 public class Cell {
     private final Tile[][] tiles;
+    // Ok so here's a comment
     // The cell's location in the overall map
     // The 4 surrounding walls of the cell.
     // A wall being false means it is unpassable, or raised, otherwise it is lowered.
