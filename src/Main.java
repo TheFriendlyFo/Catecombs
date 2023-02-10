@@ -1,6 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-       Tile[][] maze = MazeBuilder.buildMaze(3, 4);
+       Tile[][] maze = MazeBuilder.buildMaze(6, 4);
 
         for (Tile[] tiles : maze) {
             for (Tile tile : tiles) {

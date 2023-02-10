@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class MazeBuilder {
     private static final Point[] directions = new Point[]{
@@ -14,28 +13,23 @@ public class MazeBuilder {
 
     public static Tile[][] buildMaze(int cellSize, int mazeSize) {
         Cell[][] cellMaze = initializeCells(cellSize, mazeSize);
+        cellMaze[0][0].setAccessed();
         mazeAlgorithm(cellMaze, mazeSize, 0, 0);
 
-        Tile[][] tileMaze = new Tile[1 + cellSize * mazeSize][1 + cellSize * mazeSize];
-        Arrays.fill(tileMaze[0], Tile.BARRIER);
-
-        for (int y = 1; y < tileMaze.length;) {
-            tileMaze[y][0] = Tile.BARRIER;
-
-            for (int cellRow = 0; cellRow < cellSize; cellRow++, y++) {
-                for (int cellNum = 0; cellNum < tileMaze[y].length; cellNum++) {
-                    for (int tileNum = 0; tileNum < cellSize; tileNum++)  {
-                        tileMaze[y][1 + cellNum * cellSize + tileNum] = cellMaze[(y - 1)/cellSize][cellNum].getRow(cellRow)[tileNum];
-                    }
-                }
-
-            }
-        }
-
-        return tileMaze;
+        return convertToTileArray(cellMaze, cellSize, mazeSize);
     }
 
-    public static boolean mazeAlgorithm(Cell[][] maze, int mazeSize, int x, int y) {
+    private static boolean mazeAlgorithm(Cell[][] maze, int mazeSize, int x, int y) {
+
+        for (Tile[] tiles : convertToTileArray(maze, maze[0][0].getRow(0).length, mazeSize)) {
+            for (Tile tile : tiles) {
+                System.out.print(tile + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+
+
         if (cellsAccessed > mazeSize * mazeSize) return true;
 
         ArrayList<Vector> possibilities = new ArrayList<>();
@@ -59,8 +53,10 @@ public class MazeBuilder {
                 } else {
                     maze[vector.inY][vector.inX].lowerWall(wall - 2);
                 }
-                cellsAccessed++;
 
+                maze[vector.inY][vector.inX].setAccessed();
+
+                cellsAccessed++;
                 checkComplete = mazeAlgorithm(maze, mazeSize, vector.inX, vector.inY);
             } else {
                 return false;
@@ -83,5 +79,25 @@ public class MazeBuilder {
 
     private static boolean validCell(Cell[][] maze, int x, int y) {
         return (0 <= x && x < maze.length) && (0 <= y && y < maze.length) && !maze[y][x].isAccessed();
+    }
+
+    private static Tile[][] convertToTileArray(Cell[][] cellMaze, int cellSize, int mazeSize) {
+        Tile[][] tileMaze = new Tile[1 + cellSize * mazeSize][1 + cellSize * mazeSize];
+        Arrays.fill(tileMaze[0], Tile.BARRIER);
+
+        for (int y = 0; y < mazeSize; y++) {
+            for (int cellRow = 0; cellRow < cellSize; cellRow++) {
+                tileMaze[y * cellSize + cellRow][0] = Tile.BARRIER;
+                for (int cellNum = 0; cellNum < mazeSize; cellNum++) {
+                    for (int tileNum = 0; tileNum < cellSize; tileNum++)  {
+                        tileMaze[y * cellSize + cellRow + 1][cellNum * cellSize + tileNum + 1] = cellMaze[y][cellNum].getRow(cellRow)[tileNum];
+                    }
+                }
+            }
+        }
+
+        tileMaze[tileMaze.length - 1][0] = Tile.BARRIER;
+
+        return tileMaze;
     }
 }

@@ -10,7 +10,6 @@
       <change beforePath="$PROJECT_DIR$/src/Cell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MazeBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MazeBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,12 +1,5 @@
 public class Cell {
     private final Tile[][] tiles;
-    // Ok so here's a comment
-    // The cell's location in the overall map
-    // The 4 surrounding walls of the cell.
-    // A wall being false means it is unpassable, or raised, otherwise it is lowered.
-    // The indices are arranged in the following pattern:
-    //   1
-    // 0
     private boolean isAccessed;
     private final int size;
 
@@ -39,7 +32,9 @@ public class Cell {
         for (int i = position; i < position + length; i++) {
             tiles[y == -1 ? i : size - 1][x == -1 ? i : size - 1] = Tile.BLANK;
         }
+    }
 
+    public void setAccessed() {
         isAccessed = true;
     }
 
