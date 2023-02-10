@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class MazeBuilder {
     private static final Point[] directions = new Point[]{
@@ -10,10 +12,27 @@ public class MazeBuilder {
     private record Vector(int inX, int inY, int wall) {
     }
 
-    public static Cell[][] buildMaze(int cellSize, int mazeSize) {
-        Cell[][] maze = initializeCells(cellSize, mazeSize);
-        mazeAlgorithm(maze, mazeSize, 0, 0);
-        return maze;
+    public static Tile[][] buildMaze(int cellSize, int mazeSize) {
+        Cell[][] cellMaze = initializeCells(cellSize, mazeSize);
+        mazeAlgorithm(cellMaze, mazeSize, 0, 0);
+
+        Tile[][] tileMaze = new Tile[1 + cellSize * mazeSize][1 + cellSize * mazeSize];
+        Arrays.fill(tileMaze[0], Tile.BARRIER);
+
+        for (int y = 1; y < tileMaze.length;) {
+            tileMaze[y][0] = Tile.BARRIER;
+
+            for (int cellRow = 0; cellRow < cellSize; cellRow++, y++) {
+                for (int cellNum = 0; cellNum < tileMaze[y].length; cellNum++) {
+                    for (int tileNum = 0; tileNum < cellSize; tileNum++)  {
+                        tileMaze[y][1 + cellNum * cellSize + tileNum] = cellMaze[(y - 1)/cellSize][cellNum].getRow(cellRow)[tileNum];
+                    }
+                }
+
+            }
+        }
+
+        return tileMaze;
     }
 
     public static boolean mazeAlgorithm(Cell[][] maze, int mazeSize, int x, int y) {
@@ -23,6 +42,7 @@ public class MazeBuilder {
         boolean checkComplete = false;
 
         while (!checkComplete) {
+            possibilities.clear();
             for (int i = 0; i < directions.length; i++) {
                 int newX = x + directions[i].x();
                 int newY = y + directions[i].y();
@@ -46,8 +66,7 @@ public class MazeBuilder {
                 return false;
             }
         }
-
-        return true;
+        return false;
     }
 
     private static Cell[][] initializeCells(int cellSize, int mazeSize) {

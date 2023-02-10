@@ -11,13 +11,13 @@ public class Cell {
     private final int size;
 
     Cell(int size) {
-        this.size = size + 1;
-        this.tiles = new Tile[this.size][this.size];
+        this.size = size;
+        this.tiles = new Tile[size][size];
         isAccessed = false;
 
-        for (int y = 0; y < this.size; y++) {
-            for (int x = 0; x < this.size; x++) {
-                tiles[y][x] = x == this.size - 1 ||  y == this.size - 1 ? Tile.BARRIER : Tile.BLANK;
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                tiles[y][x] = x == size - 1 ||  y == size - 1 ? Tile.BARRIER : Tile.BLANK;
             }
         }
     }
@@ -43,10 +43,8 @@ public class Cell {
         isAccessed = true;
     }
 
-    public void printRow(int row) {
-        for (Tile tile : tiles[row]) {
-            System.out.print(tile + " ");
-        }
+    public Tile[] getRow(int row) {
+        return tiles[row];
     }
 
     public boolean isAccessed() {

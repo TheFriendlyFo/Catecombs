@@ -1,5 +1,5 @@
 public class Tile {
-    public static final Tile BLANK = new Tile('·', true);
+    public static final Tile BLANK = new Tile('-', true);
     public static final Tile BARRIER = new Tile('X', false);
     private final char icon;
     private final boolean isPassable;
