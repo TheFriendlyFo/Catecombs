@@ -1,16 +1,14 @@
-public class Tile {
-    public static final Tile BLANK = new Tile('-', true);
-    public static final Tile BARRIER = new Tile('X', false);
-    private final char icon;
+public class Tile implements MazeItem {
+    private final String icon;
     private final boolean isPassable;
 
-    Tile(char icon, boolean isPassable) {
+    Tile(String icon, boolean isPassable) {
         this.icon = icon;
         this.isPassable = isPassable;
     }
 
     public String toString() {
-        return String.valueOf(icon);
+        return (char) 27 + "[" + icon + (char) 27 + "[39m";
     }
 
     public boolean isPassable() {

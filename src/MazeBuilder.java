@@ -2,14 +2,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MazeBuilder {
-    private static final Point[] directions = new Point[]{
-            new Point(0, 1),
-            new Point(1, 0),
-            new Point(0, -1),
-            new Point(-1, 0)};
+    private static final int[][] directions = new int[][]{new int[]{0, 1}, new int[]{1, 0}, new int[]{0, -1}, new int[]{-1, 0}};
     private static int cellsAccessed = 0;
-    private record Vector(int inX, int inY, int wall) {
-    }
 
     public static Tile[][] buildMaze(int cellSize, int mazeSize) {
         Cell[][] cellMaze = initializeCells(cellSize, mazeSize);
@@ -20,16 +14,6 @@ public class MazeBuilder {
     }
 
     private static boolean mazeAlgorithm(Cell[][] maze, int mazeSize, int x, int y) {
-
-        for (Tile[] tiles : convertToTileArray(maze, maze[0][0].getRow(0).length, mazeSize)) {
-            for (Tile tile : tiles) {
-                System.out.print(tile + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-
-
         if (cellsAccessed > mazeSize * mazeSize) return true;
 
         ArrayList<Vector> possibilities = new ArrayList<>();
@@ -38,8 +22,8 @@ public class MazeBuilder {
         while (!checkComplete) {
             possibilities.clear();
             for (int i = 0; i < directions.length; i++) {
-                int newX = x + directions[i].x();
-                int newY = y + directions[i].y();
+                int newX = x + directions[i][0];
+                int newY = y + directions[i][1];
 
                 if (validCell(maze, newX, newY)) possibilities.add(new Vector(newX, newY, i));
             }
@@ -83,21 +67,24 @@ public class MazeBuilder {
 
     private static Tile[][] convertToTileArray(Cell[][] cellMaze, int cellSize, int mazeSize) {
         Tile[][] tileMaze = new Tile[1 + cellSize * mazeSize][1 + cellSize * mazeSize];
-        Arrays.fill(tileMaze[0], Tile.BARRIER);
+        Arrays.fill(tileMaze[0], Catacombs.BARRIER);
 
         for (int y = 0; y < mazeSize; y++) {
             for (int cellRow = 0; cellRow < cellSize; cellRow++) {
-                tileMaze[y * cellSize + cellRow][0] = Tile.BARRIER;
+                tileMaze[y * cellSize + cellRow][0] = Catacombs.BARRIER;
                 for (int cellNum = 0; cellNum < mazeSize; cellNum++) {
-                    for (int tileNum = 0; tileNum < cellSize; tileNum++)  {
+                    for (int tileNum = 0; tileNum < cellSize; tileNum++) {
                         tileMaze[y * cellSize + cellRow + 1][cellNum * cellSize + tileNum + 1] = cellMaze[y][cellNum].getRow(cellRow)[tileNum];
                     }
                 }
             }
         }
 
-        tileMaze[tileMaze.length - 1][0] = Tile.BARRIER;
+        tileMaze[tileMaze.length - 1][0] = Catacombs.BARRIER;
 
         return tileMaze;
+    }
+
+    private record Vector(int inX, int inY, int wall) {
     }
 }
