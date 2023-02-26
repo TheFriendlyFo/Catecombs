@@ -1,62 +1,83 @@
 import java.util.ArrayList;
 
 public class Catacombs {
-
-    public static final Tile BLANK = new Tile("39m-", true);
-    public static final Tile BARRIER = new Tile("39mX", false);
-    public static final TallGrass TALL_GRASS = new TallGrass("32m#", true);
     private final Tile[][] worldMap;
     private final Player player;
     private final ArrayList<Enemy> enemies;
 
     Catacombs(int cellSize, int numCells) {
         worldMap = MazeBuilder.buildMaze(cellSize, numCells);
-        player = new Player(1, 1);
+        player = new Player(4, 4);
         enemies = new ArrayList<>();
-        enemies.add(new Enemy(3,3));
     }
 
-    public MazeItem[][] getFOV(int viewRange) {
+    public int[] getFOVFrame(int viewRange){
+        int x = player.x(), y = player.y();
+        int r = viewRange/2;
+
+        int xStart = Math.max(x - r, 0) - (x + r >= worldMap.length ? r + x - worldMap.length + 1: 0);
+        int xEnd = Math.min(x + r, worldMap.length - 1) + (x - r < 0 ? r - x : 0);
+        int yStart = Math.max(y - r, 0) - (y + r >= worldMap.length ? r + y - worldMap.length + 1: 0);
+        int yEnd = Math.min(y + r, worldMap.length - 1) + (y - r < 0 ? r - y : 0);
+
+        return new int[]{xStart, xEnd, yStart, yEnd};
+    }
+
+    public MazeItem[][] getFOV(int viewRange, int[] frame) {
         MazeItem[][] FOV = new MazeItem[viewRange][viewRange];
 
-        for (int yComplete = 0, iY = 0; yComplete < viewRange;) {
-            int yPos = player.y() + iY;
-            if (0 <= yPos && yPos < worldMap.length) {
-                for (int xComplete = 0, iX = 0; xComplete < viewRange; ) {
-                    int xPos = player.x() + iX;
-                    if (0 <= xPos && xPos < worldMap.length) {
-                        FOV[yPos][xPos] = worldMap[yPos][xPos];
-                        xComplete++;
-                    }
-                    iX = iX <= 0 ? -iX + 1 : -iX;
-                }
-                yComplete++;
+        for (int yi = frame[2]; yi <= frame[3]; yi++) {
+            for (int xi = frame[0]; xi <= frame[1]; xi++) {
+                FOV[yi - frame[2]][xi - frame[0]] = (xi == player.x() && yi == player.y()) ? player : worldMap[yi][xi];
             }
-            iY = iY <= 0 ? -iY + 1 : -iY;
         }
 
-        FOV[player.y()][player.x()] = player;
         for (Enemy enemy : enemies) {
-            FOV[enemy.getY()][enemy.getX()] = enemy;
-            enemy.update(FOV);
+            if ((frame[0] <= enemy.x() && enemy.x() < frame[1]) && (frame[2] <= enemy.y() && enemy.y() < frame[3])){
+                FOV[enemy.y() - frame[2]][enemy.x() - frame[0]] = enemy;
+            }
         }
-
-
-
         return FOV;
     }
 
     public void printFOV(MazeItem[][] map) {
+        StringBuilder printer = new StringBuilder();
         String outerBarrier = (char) 27 + "[36mX" + (char) 27 + "[39m ";
 
-        System.out.println(outerBarrier.repeat(map.length + 2));
+        printer.append(outerBarrier.repeat(map.length + 2)).append("\n");
         for (MazeItem[] row : map) {
-            System.out.print(outerBarrier);
+            printer.append(outerBarrier);
             for (MazeItem column : row) {
-                System.out.print(column + " ");
+                printer.append(column).append(" ");
             }
-            System.out.println(outerBarrier);
+            printer.append(outerBarrier).append("\n");
         }
-        System.out.println(outerBarrier.repeat(map.length + 2));
+        printer.append(outerBarrier.repeat(map.length + 2));
+        System.out.println(printer);
+    }
+
+    public void update() {
+        int[] frame = getFOVFrame(9);
+
+        player.move(worldMap);
+
+        for (Enemy enemy : enemies) {
+            if ((frame[0] <= enemy.x() && enemy.x() < frame[1]) && (frame[2] <= enemy.y() && enemy.y() < frame[3])){
+                enemy.move(worldMap, player);
+            }
+        }
+
+        MazeItem[][] FOV = getFOV(9, frame);
+
+        for (int y = 0; y < FOV.length; y++) {
+            for (int x = 0; x < FOV.length; x++) {
+                if (FOV[y][x] == Tile.TALL_GRASS && Math.random() < 0.0025) {
+                    enemies.add(new Enemy(x + frame[0], y + frame[2]));
+                }
+            }
+
+        }
+
+        printFOV(FOV);
     }
 }

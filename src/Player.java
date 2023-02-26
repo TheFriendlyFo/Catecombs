@@ -1,5 +1,7 @@
+import java.util.Scanner;
+
 public class Player implements MazeItem {
-    int x, y;
+    private int x, y;
 
     Player(int x, int y) {
         this.x = x;
@@ -20,6 +22,26 @@ public class Player implements MazeItem {
 
     @Override
     public boolean isPassable() {
-        return false;
+        return true;
+    }
+
+    public void move(Tile[][] worldMap) {
+        Scanner scanner = new Scanner(System.in);
+        boolean valid = false;
+
+        while (!valid) {
+            System.out.println("Enter direction to move (WASD):");
+            System.out.print("> ");
+            String move = scanner.nextLine();
+
+            int xAdd = DirectionUtils.getX(move);
+            int yAdd = DirectionUtils.getY(move);
+            if (xAdd == 0 && yAdd == 0) break;
+            if (worldMap[y + yAdd][x + xAdd].isPassable()) {
+                x += xAdd;
+                y += yAdd;
+                valid = true;
+            }
+        }
     }
 }
