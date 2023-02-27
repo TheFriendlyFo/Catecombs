@@ -1,11 +1,12 @@
 import java.util.ArrayList;
 
 public class Enemy implements MazeItem {
+    private static Player target;
 
     private int x, y;
     private char icon;
 
-    //private int depth;
+    private int depth;
 
     Enemy(int x, int y) {
         this.x = x;
@@ -14,7 +15,7 @@ public class Enemy implements MazeItem {
         //depth = 0;
     }
 
-    static ArrayList<Pt> rankMoves(Pt move, Player target, MazeItem[][] map, ArrayList<Pt> previousMoves) {
+    static ArrayList<Pt> rankMoves(Pt move, Player target, FOV fov, ArrayList<Pt> previousMoves) {
         ArrayList<int[]> moves = new ArrayList<>();
         ArrayList<Pt> returnMoves = new ArrayList<>();
 
@@ -23,10 +24,8 @@ public class Enemy implements MazeItem {
             int newY = move.y() + DirectionUtils.getY(i);
             int distance = getDistance(newX, newY, target);
 
-            boolean inBoundsX = (0 <= newX && newX < map.length);
-            boolean inBoundsY = (0 <= newY && newY < map.length);
             boolean newMove = !previousMoves.contains(new Pt(newX, newY));
-            if (!(inBoundsX && inBoundsY && newMove && map[newY][newX].isPassable())) continue;
+            if (!(fov.isPassable(newX, newY) && newMove)) continue;
 
             for (int j = 0; j <= i; j++) {
                 if (j == moves.size() || moves.get(j)[2] > distance) {
@@ -46,18 +45,18 @@ public class Enemy implements MazeItem {
         return (int) (Math.sqrt(Math.pow(x - player.x(), 2) + Math.pow(y - player.y(), 2)) * 100);
     }
 
-    public void move(Tile[][] map, Player target) {
-        if (Math.random() > 0.7) return;
+    public void move(FOV fov) {
+        if ((x == target.x() && y == target.y()) || Math.random() > 0.7) return;
 
-        //depth = 0;
-        move(x, y, map, target, new ArrayList<>());
+        depth = 0;
+        move(x, y, fov, new ArrayList<>());
     }
 
-    private boolean move(int currentX, int currentY, Tile[][] map, Player target, ArrayList<Pt> previousMoves) {
+    private boolean move(int currentX, int currentY, FOV fov, ArrayList<Pt> previousMoves) {
         previousMoves.add(new Pt(currentX, currentY));
 
-        //depth++;
-        //if (depth > 10000000) return false;
+        depth++;
+        if (depth > 100000) return false;
 
         if (currentX == target.x() && currentY == target.y()) {
             icon = DirectionUtils.getIcon(previousMoves.get(1).x() - x, previousMoves.get(1).y() - y);
@@ -66,11 +65,11 @@ public class Enemy implements MazeItem {
             return true;
         }
 
-        for (Pt move : rankMoves(new Pt(currentX, currentY), target, map, previousMoves)) {
-            if (move(move.x(), move.y(), map, target, previousMoves)) return true;
+        for (Pt move : rankMoves(new Pt(currentX, currentY), target, fov, previousMoves)) {
+            if (move(move.x(), move.y(), fov, previousMoves)) return true;
         }
 
-        previousMoves.remove(previousMoves.size() - 1);
+        previousMoves.remove(new Pt(currentX, currentY));
         return false;
     }
 
@@ -103,5 +102,7 @@ public class Enemy implements MazeItem {
         }
     }
 
-
+    public static void setTarget(Player target) {
+        Enemy.target = target;
+    }
 }
