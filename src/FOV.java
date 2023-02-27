@@ -14,17 +14,16 @@ public class FOV {
     }
 
     private boolean withinFrame(Enemy enemy) {
-        return (frame[0] <= enemy.x() && enemy.x() <= frame[1])
-                && (frame[2] <= enemy.y() && enemy.y() <= frame[3]);
+        return (frame[0] <= enemy.x() && enemy.x() <= frame[1]) && (frame[2] <= enemy.y() && enemy.y() <= frame[3]);
     }
 
-    private void focusFrame(Player player){
+    private void focusFrame(Player player) {
         int x = player.x(), y = player.y();
-        int r = viewRange/2;
+        int r = viewRange / 2;
 
-        frame[0] = Math.max(x - r, 0) - (x + r >= worldMap.length ? r + x - worldMap.length + 1: 0);
+        frame[0] = Math.max(x - r, 0) - (x + r >= worldMap.length ? r + x - worldMap.length + 1 : 0);
         frame[1] = Math.min(x + r, worldMap.length - 1) + (x - r < 0 ? r - x : 0);
-        frame[2] = Math.max(y - r, 0) - (y + r >= worldMap.length ? r + y - worldMap.length + 1: 0);
+        frame[2] = Math.max(y - r, 0) - (y + r >= worldMap.length ? r + y - worldMap.length + 1 : 0);
         frame[3] = Math.min(y + r, worldMap.length - 1) + (y - r < 0 ? r - y : 0);
     }
 
@@ -37,7 +36,7 @@ public class FOV {
         }
 
         for (Enemy enemy : enemies) {
-            if (withinFrame(enemy)){
+            if (withinFrame(enemy)) {
                 fov[adjustedY(enemy)][adjustedX(enemy)] = enemy;
             }
         }
@@ -58,7 +57,7 @@ public class FOV {
     }
 
     public void display() {
-        StringBuilder printer = new StringBuilder();
+        StringBuilder printer = new StringBuilder("\n".repeat(20));
         String outerBarrier = (char) 27 + "[36mX" + (char) 27 + "[39m ";
 
         printer.append(outerBarrier.repeat(fov.length + 2)).append("\n");

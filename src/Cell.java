@@ -22,7 +22,7 @@ public class Cell {
             }
         }
 
-        placeTreasure(cellDepth);
+        seedTreasure(cellDepth);
     }
 
     private boolean populateTallGrass(int x, int y) {
@@ -38,9 +38,9 @@ public class Cell {
         return false;
     }
 
-    public void placeTreasure(int cellDepth) {
+    public void seedTreasure(int cellDepth) {
         if (Math.random() < 0.02 * Math.sqrt(cellDepth + 3)) {
-            tiles[size/2 - 1][size/2 - 1] = Tile.TREASURE;
+            //Add treasure code here
         }
     }
     public void lowerWall(int wall) {

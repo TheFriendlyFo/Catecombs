@@ -10,8 +10,12 @@ public class Catacombs {
         worldMap = MazeBuilder.buildMaze(cellSize, numCells);
         player = new Player(4, 4);
         enemies = new ArrayList<>();
+
         Enemy.setTarget(player);
+
         fov = new FOV(worldMap, 15);
+        fov.focus(player, enemies);
+        fov.display();
     }
 
     public void update() {

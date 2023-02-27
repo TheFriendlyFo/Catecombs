@@ -5,6 +5,7 @@ public class Enemy implements MazeItem {
 
     private int x, y;
     private char icon;
+    private int turn;
 
     private int depth;
 
@@ -12,7 +13,7 @@ public class Enemy implements MazeItem {
         this.x = x;
         this.y = y;
         icon = '>';
-        //depth = 0;
+        turn = 0;
     }
 
     static ArrayList<Pt> rankMoves(Pt move, Player target, FOV fov, ArrayList<Pt> previousMoves) {
@@ -46,8 +47,13 @@ public class Enemy implements MazeItem {
     }
 
     public void move(FOV fov) {
-        if ((x == target.x() && y == target.y()) || Math.random() > 0.7) return;
+        if ((x == target.x() && y == target.y())) return;
+        if (turn == 2) {
+            turn = 0;
+            return;
+        }
 
+        turn++;
         depth = 0;
         move(x, y, fov, new ArrayList<>());
     }
