@@ -46,6 +46,16 @@ public class Enemy implements MazeItem {
         return (int) (Math.sqrt(Math.pow(x - player.x(), 2) + Math.pow(y - player.y(), 2)) * 100);
     }
 
+    public void move() {
+        ArrayList<Node> openSet = new ArrayList<>();
+        ArrayList<Node> closedSet = new ArrayList<>();
+        openSet.add(new Node(x, y, 0));
+
+        while (openSet.size() < 0) {
+            Node currentNode = openSet.remove(0);
+            closedSet.add(currentNode);
+        }
+    }
     public void move(FOV fov) {
         if ((x == target.x() && y == target.y())) return;
         if (turn == 2) {
@@ -110,5 +120,25 @@ public class Enemy implements MazeItem {
 
     public static void setTarget(Player target) {
         Enemy.target = target;
+    }
+
+    private class Node {
+        private final int x, y;
+        private int cost;
+        private Node parent;
+
+        Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+            cost = Integer.MAX_VALUE;
+            parent = null;
+        }
+
+        Node(int x, int y, int cost) {
+            this.x = x;
+            this.y = y;
+            this.cost = cost;
+            parent = null;
+        }
     }
 }
