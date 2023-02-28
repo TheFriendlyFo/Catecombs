@@ -42,6 +42,7 @@ public class Enemy implements MazeItem {
         int iterations = 0;
 
         while (openSet.size() > 0) {
+            QuickSort.sort(openSet);
             Node currentNode = openSet.remove(0);
             closedSet.add(currentNode);
 
@@ -77,7 +78,7 @@ public class Enemy implements MazeItem {
     }
 
 
-    private static class Node {
+    private static class Node implements Comparable{
         private final int x, y;
         private int cost;
         private Node parent;
@@ -97,14 +98,6 @@ public class Enemy implements MazeItem {
             this.parent = parent;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Node node = (Node) o;
-            return x == node.x && y == node.y;
-        }
-
         public ArrayList<Node> getNeighbors(FOV fov, ArrayList<Node> closedSet) {
             ArrayList<Node> neighbors = new ArrayList<>();
 
@@ -120,5 +113,20 @@ public class Enemy implements MazeItem {
 
             return neighbors;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return x == node.x && y == node.y;
+        }
+
+        @Override
+        public int compareTo(Comparable compare) {
+            Node node = (Node) compare;
+            return Integer.compare(cost, node.cost);
+        }
+
     }
 }
