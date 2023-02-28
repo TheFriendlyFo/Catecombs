@@ -1,16 +1,16 @@
 public class DirectionUtils {
 
     private DirectionUtils(){}
-    public static int getX(int a) {
-        return switch (a) {
+    public static int getX(int x, int a) {
+        return x + switch (a) {
             case 1 -> 1;
             case 3 -> -1;
             default -> 0;
         };
     }
 
-    public static int getY(int a) {
-        return switch (a) {
+    public static int getY(int y, int a) {
+        return y + switch (a) {
             case 0 -> 1;
             case 2 -> -1;
             default -> 0;

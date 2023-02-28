@@ -5,78 +5,11 @@ public class Enemy implements MazeItem {
 
     private int x, y;
     private char icon;
-    private int turn;
-
-    private int depth;
 
     Enemy(int x, int y) {
         this.x = x;
         this.y = y;
         icon = '>';
-        turn = 0;
-    }
-
-    static ArrayList<Pt> rankMoves(Pt move, Player target, FOV fov, ArrayList<Pt> previousMoves) {
-        ArrayList<int[]> moves = new ArrayList<>();
-        ArrayList<Pt> returnMoves = new ArrayList<>();
-
-        for (int i = 0; i < 4; i++) {
-            int newX = move.x() + DirectionUtils.getX(i);
-            int newY = move.y() + DirectionUtils.getY(i);
-            int distance = getDistance(newX, newY, target);
-
-            boolean newMove = !previousMoves.contains(new Pt(newX, newY));
-            if (!(fov.isPassable(newX, newY) && newMove)) continue;
-
-            for (int j = 0; j <= i; j++) {
-                if (j == moves.size() || moves.get(j)[2] > distance) {
-                    moves.add(j, new int[]{newX, newY, distance});
-                    break;
-                }
-            }
-        }
-
-        for (int[] ints : moves) {
-            returnMoves.add(new Pt(ints[0], ints[1]));
-        }
-        return returnMoves;
-    }
-
-    private static int getDistance(int x, int y, Player player) {
-        return (int) (Math.sqrt(Math.pow(x - player.x(), 2) + Math.pow(y - player.y(), 2)) * 100);
-    }
-
-    public void move(FOV fov) {
-        if ((x == target.x() && y == target.y())) return;
-        if (turn == 2) {
-            turn = 0;
-            return;
-        }
-
-        turn++;
-        depth = 0;
-        move(x, y, fov, new ArrayList<>());
-    }
-
-    private boolean move(int currentX, int currentY, FOV fov, ArrayList<Pt> previousMoves) {
-        previousMoves.add(new Pt(currentX, currentY));
-
-        depth++;
-        if (depth > 100000) return false;
-
-        if (currentX == target.x() && currentY == target.y()) {
-            icon = DirectionUtils.getIcon(previousMoves.get(1).x() - x, previousMoves.get(1).y() - y);
-            x = previousMoves.get(1).x();
-            y = previousMoves.get(1).y();
-            return true;
-        }
-
-        for (Pt move : rankMoves(new Pt(currentX, currentY), target, fov, previousMoves)) {
-            if (move(move.x(), move.y(), fov, previousMoves)) return true;
-        }
-
-        previousMoves.remove(new Pt(currentX, currentY));
-        return false;
     }
 
     public int x() {
@@ -96,20 +29,24 @@ public class Enemy implements MazeItem {
         return false;
     }
 
-    private record Pt(int x, int y) {
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj.getClass() == Pt.class) {
-                Pt ptObj = (Pt) obj;
-                return (ptObj.x() == x && ptObj.y() == y);
-            }
-            return false;
-        }
-    }
-
     public static void setTarget(Player target) {
         Enemy.target = target;
+    }
+
+    public ArrayList<Node> getNeighbors(Node centerNode, FOV fov, ArrayList<Node> closedSet) {
+        ArrayList<Node> neighbors = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            int x = DirectionUtils.getX(centerNode.x(), i);
+            int y = DirectionUtils.getY(centerNode.y, i);
+
+            if (!fov.isPassable(x, y)) continue;
+
+            Node neighbor = new Node(x, y);
+            if (!closedSet.contains(neighbor)) neighbors.add(neighbor);
+        }
+
+        return neighbors;
     }
 
     public void move(FOV fov) {
@@ -121,17 +58,20 @@ public class Enemy implements MazeItem {
             Node currentNode = openSet.remove(0);
             closedSet.add(currentNode);
 
-            if (currentNode.x() == target.x() && currentNode.y() == target.y()) {
-                while (currentNode.parent.x() != x && currentNode.parent.y() != y) {
+            if (currentNode.x() == target.x() && currentNode.y == target.y()) {
+                while (currentNode.parent.parent != null) {
                     currentNode = currentNode.parent;
                 }
+
+                icon = DirectionUtils.getIcon(currentNode.x() - x, currentNode.y - y);
                 x = currentNode.x();
-                y = currentNode.y();
+                y = currentNode.y;
             }
 
-            for (Node neighbor : getNeighbors(fov, closedSet)) {
+            for (Node neighbor : getNeighbors(currentNode, fov, closedSet)) {
                 int cost = currentNode.cost() + getCost(neighbor);
-                if (cost < neighbor.cost() || !openSet.contains(neighbor)) {
+
+                if (cost < neighbor.cost() || closedSet.contains(neighbor)) {
                     neighbor.setCost(cost);
                     neighbor.setParent(currentNode);
 
@@ -144,10 +84,10 @@ public class Enemy implements MazeItem {
     }
 
     public int getCost(Node node) {
-        return Math.abs(node.x() - target.x()) + Math.abs(node.y() - target.y());
+        return Math.abs(node.x() - target.x()) + Math.abs(node.y - target.y());
     }
 
-    private class Node {
+    private static class Node {
         private final int x, y;
         private int cost;
         private Node parent;
@@ -184,6 +124,22 @@ public class Enemy implements MazeItem {
 
         public int y() {
             return y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return x == node.x && y == node.y;
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
         }
     }
 }

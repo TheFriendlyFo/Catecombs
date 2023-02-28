@@ -21,11 +21,11 @@ public class MazeBuilder {
 
         while (!checkComplete) {
             possibilities.clear();
-            for (int i = 0; i < 4; i ++) {
-                int newX = x + DirectionUtils.getX(i);
-                int newY = y + DirectionUtils.getY(i);
+            for (int ang = 0; ang < 4; ang ++) {
+                int newX = DirectionUtils.getX(x, ang);
+                int newY = DirectionUtils.getY(y, ang);
 
-                if (validCell(maze, newX, newY)) possibilities.add(new Vector(newX, newY, i));
+                if (validCell(maze, newX, newY)) possibilities.add(new Vector(newX, newY, ang));
             }
 
             if (possibilities.size() > 0) {

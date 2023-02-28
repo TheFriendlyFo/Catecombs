@@ -22,9 +22,9 @@ public class FOV {
         int r = viewRange / 2;
 
         frame[0] = Math.max(x - r, 0) - (x + r >= worldMap.length ? r + x - worldMap.length + 1 : 0);
-        frame[1] = Math.min(x + r, worldMap.length - 1) + (x - r < 0 ? r - x : 0);
+        frame[1] = frame[0] + 9;
         frame[2] = Math.max(y - r, 0) - (y + r >= worldMap.length ? r + y - worldMap.length + 1 : 0);
-        frame[3] = Math.min(y + r, worldMap.length - 1) + (y - r < 0 ? r - y : 0);
+        frame[3] = frame[2] + 9;
     }
 
     public void focus(Player player, ArrayList<Enemy> enemies) {
@@ -57,7 +57,7 @@ public class FOV {
     }
 
     public void display() {
-        StringBuilder printer = new StringBuilder("\n".repeat(20));
+        StringBuilder printer = new StringBuilder("\n".repeat(0));
         String outerBarrier = (char) 27 + "[36mX" + (char) 27 + "[39m ";
 
         printer.append(outerBarrier.repeat(fov.length + 2)).append("\n");
