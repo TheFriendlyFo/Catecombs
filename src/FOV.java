@@ -22,9 +22,9 @@ public class FOV {
         int r = viewRange / 2;
 
         frame[0] = Math.max(x - r, 0) - (x + r >= worldMap.length ? r + x - worldMap.length + 1 : 0);
-        frame[1] = frame[0] + 9;
+        frame[1] = frame[0] + viewRange - 1;
         frame[2] = Math.max(y - r, 0) - (y + r >= worldMap.length ? r + y - worldMap.length + 1 : 0);
-        frame[3] = frame[2] + 9;
+        frame[3] = frame[2] + viewRange - 1;
     }
 
     public void focus(Player player, ArrayList<Enemy> enemies) {

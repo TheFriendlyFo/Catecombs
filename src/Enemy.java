@@ -33,45 +33,32 @@ public class Enemy implements MazeItem {
         Enemy.target = target;
     }
 
-    public ArrayList<Node> getNeighbors(Node centerNode, FOV fov, ArrayList<Node> closedSet) {
-        ArrayList<Node> neighbors = new ArrayList<>();
-
-        for (int i = 0; i < 4; i++) {
-            int x = DirectionUtils.getX(centerNode.x(), i);
-            int y = DirectionUtils.getY(centerNode.y, i);
-
-            if (!fov.isPassable(x, y)) continue;
-
-            Node neighbor = new Node(x, y);
-            if (!closedSet.contains(neighbor)) neighbors.add(neighbor);
-        }
-
-        return neighbors;
-    }
-
     public void move(FOV fov) {
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
-        openSet.add(new Node(x, y, 0));
+        Node start = new Node(x, y);
+        start.setCost(0);
+        openSet.add(start);
+        int iterations = 0;
 
         while (openSet.size() > 0) {
             Node currentNode = openSet.remove(0);
             closedSet.add(currentNode);
 
-            if (currentNode.x() == target.x() && currentNode.y == target.y()) {
-                while (currentNode.parent.parent != null) {
+            if (currentNode.x == target.x() && currentNode.y == target.y()) {
+                while (currentNode.parent != start) {
                     currentNode = currentNode.parent;
                 }
 
-                icon = DirectionUtils.getIcon(currentNode.x() - x, currentNode.y - y);
-                x = currentNode.x();
+                icon = DirectionUtils.getIcon(currentNode.x - x, currentNode.y - y);
+                x = currentNode.x;
                 y = currentNode.y;
             }
 
-            for (Node neighbor : getNeighbors(currentNode, fov, closedSet)) {
-                int cost = currentNode.cost() + getCost(neighbor);
+            for (Node neighbor : currentNode.getNeighbors(fov, closedSet)) {
+                int cost = currentNode.cost + getCost(neighbor);
 
-                if (cost < neighbor.cost() || closedSet.contains(neighbor)) {
+                if (cost < neighbor.cost || closedSet.contains(neighbor)) {
                     neighbor.setCost(cost);
                     neighbor.setParent(currentNode);
 
@@ -80,12 +67,15 @@ public class Enemy implements MazeItem {
                     }
                 }
             }
+            iterations++;
         }
+        System.out.println(iterations);
     }
 
     public int getCost(Node node) {
-        return Math.abs(node.x() - target.x()) + Math.abs(node.y - target.y());
+        return Math.abs(node.x - target.x()) + Math.abs(node.y - target.y());
     }
+
 
     private static class Node {
         private final int x, y;
@@ -99,31 +89,12 @@ public class Enemy implements MazeItem {
             parent = null;
         }
 
-        Node(int x, int y, int cost) {
-            this.x = x;
-            this.y = y;
-            this.cost = cost;
-            parent = null;
-        }
-
         public void setCost(int cost) {
             this.cost = cost;
         }
 
         public void setParent(Node parent) {
             this.parent = parent;
-        }
-
-        public int cost() {
-            return cost;
-        }
-
-        public int x() {
-            return x;
-        }
-
-        public int y() {
-            return y;
         }
 
         @Override
@@ -134,12 +105,20 @@ public class Enemy implements MazeItem {
             return x == node.x && y == node.y;
         }
 
-        @Override
-        public String toString() {
-            return "Node{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
+        public ArrayList<Node> getNeighbors(FOV fov, ArrayList<Node> closedSet) {
+            ArrayList<Node> neighbors = new ArrayList<>();
+
+            for (int i = 0; i < 4; i++) {
+                int neighborX = DirectionUtils.getX(x, i);
+                int neighborY = DirectionUtils.getY(y, i);
+
+                if (!fov.isPassable(neighborX, neighborY)) continue;
+
+                Node neighbor = new Node(neighborX, neighborY);
+                if (!closedSet.contains(neighbor)) neighbors.add(neighbor);
+            }
+
+            return neighbors;
         }
     }
 }
