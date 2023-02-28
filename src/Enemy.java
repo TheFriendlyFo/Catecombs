@@ -46,16 +46,6 @@ public class Enemy implements MazeItem {
         return (int) (Math.sqrt(Math.pow(x - player.x(), 2) + Math.pow(y - player.y(), 2)) * 100);
     }
 
-    public void move() {
-        ArrayList<Node> openSet = new ArrayList<>();
-        ArrayList<Node> closedSet = new ArrayList<>();
-        openSet.add(new Node(x, y, 0));
-
-        while (openSet.size() < 0) {
-            Node currentNode = openSet.remove(0);
-            closedSet.add(currentNode);
-        }
-    }
     public void move(FOV fov) {
         if ((x == target.x() && y == target.y())) return;
         if (turn == 2) {
@@ -122,6 +112,41 @@ public class Enemy implements MazeItem {
         Enemy.target = target;
     }
 
+    public void move(FOV fov) {
+        ArrayList<Node> openSet = new ArrayList<>();
+        ArrayList<Node> closedSet = new ArrayList<>();
+        openSet.add(new Node(x, y, 0));
+
+        while (openSet.size() > 0) {
+            Node currentNode = openSet.remove(0);
+            closedSet.add(currentNode);
+
+            if (currentNode.x() == target.x() && currentNode.y() == target.y()) {
+                while (currentNode.parent.x() != x && currentNode.parent.y() != y) {
+                    currentNode = currentNode.parent;
+                }
+                x = currentNode.x();
+                y = currentNode.y();
+            }
+
+            for (Node neighbor : getNeighbors(fov, closedSet)) {
+                int cost = currentNode.cost() + getCost(neighbor);
+                if (cost < neighbor.cost() || !openSet.contains(neighbor)) {
+                    neighbor.setCost(cost);
+                    neighbor.setParent(currentNode);
+
+                    if (!openSet.contains(neighbor)) {
+                        openSet.add(neighbor);
+                    }
+                }
+            }
+        }
+    }
+
+    public int getCost(Node node) {
+        return Math.abs(node.x() - target.x()) + Math.abs(node.y() - target.y());
+    }
+
     private class Node {
         private final int x, y;
         private int cost;
@@ -139,6 +164,26 @@ public class Enemy implements MazeItem {
             this.y = y;
             this.cost = cost;
             parent = null;
+        }
+
+        public void setCost(int cost) {
+            this.cost = cost;
+        }
+
+        public void setParent(Node parent) {
+            this.parent = parent;
+        }
+
+        public int cost() {
+            return cost;
+        }
+
+        public int x() {
+            return x;
+        }
+
+        public int y() {
+            return y;
         }
     }
 }
