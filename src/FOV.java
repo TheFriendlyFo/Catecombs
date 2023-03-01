@@ -112,7 +112,7 @@ public class FOV extends JFrame {
     public void generateEnemies(ArrayList<Enemy> enemies) {
         for (int y = 0; y < fov.length; y++) {
             for (int x = 0; x < fov.length; x++) {
-                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.0025) {
+                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.001) {
                     Enemy newEnemy = new Enemy(x + frame[0], y + frame[2]);
                     enemies.add(newEnemy);
                     fov[y][x] = newEnemy;
@@ -142,16 +142,15 @@ public class FOV extends JFrame {
     private int adjustedY(Enemy enemy) {
         return enemy.y() - frame[2];
     }
-    private void appendToPane(JTextPane tp, String msg, Color c)
-    {
+    private void appendToPane(JTextPane tp, String msg, Color c) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+        AttributeSet set = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
-        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+        set = sc.addAttribute(set, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
 
         int len = tp.getDocument().getLength();
         tp.setCaretPosition(len);
-        tp.setCharacterAttributes(aset, false);
+        tp.setCharacterAttributes(set, false);
         tp.replaceSelection(msg);
     }
 }
