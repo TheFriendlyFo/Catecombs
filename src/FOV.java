@@ -29,7 +29,7 @@ public class FOV extends JFrame {
     private void setUpGraphics() {
         Font font;
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\sethv\\IdeaProjects\\MazeDungeon\\JetBrainsMonoNL-ExtraBold.ttf")).deriveFont(12f);
+            font = Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getResource("JetBrainsMonoNL-ExtraBold.ttf").getPath())).deriveFont(12f);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
