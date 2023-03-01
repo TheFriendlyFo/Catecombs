@@ -14,6 +14,7 @@ import javax.swing.text.StyleContext;
 
 public class FOV extends JFrame {
 
+    private final JFrame jFrame;
     private final JTextPane display;
     private final Tile[][] worldMap;
     private final int viewRange;
@@ -22,7 +23,8 @@ public class FOV extends JFrame {
 
     public FOV(JFrame j, Tile[][] worldMap, int viewRange) {
         display = new JTextPane();
-        j.add(display);
+        jFrame = j;
+        jFrame.add(display);
         setUpGraphics();
 
         this.worldMap = worldMap;
@@ -85,7 +87,9 @@ public class FOV extends JFrame {
             if (!withinFrame(enemy)) continue;
 
             fov[adjustedY(enemy)][adjustedX(enemy)] = worldMap[enemy.y()][enemy.x()];
-            enemy.move(this);
+
+            if (enemy.move(this)) jFrame.removeKeyListener(jFrame.getKeyListeners()[0]);
+
             if (withinFrame(enemy)) {
                 fov[adjustedY(enemy)][adjustedX(enemy)] = enemy;
             }

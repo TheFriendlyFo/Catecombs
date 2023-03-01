@@ -14,7 +14,7 @@ public class Enemy extends MazeItem {
 
         color = Color.RED;
         icon = '>';
-        isPassable = true;
+        isPassable = false;
     }
 
     public int x() {
@@ -29,9 +29,9 @@ public class Enemy extends MazeItem {
         Enemy.target = target;
     }
 
-    public void move(FOV fov) {
+    public boolean move(FOV fov) {
         moveTurn = !moveTurn;
-        if (moveTurn) return;
+        if (moveTurn) return false;
 
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
@@ -52,9 +52,14 @@ public class Enemy extends MazeItem {
                 icon = DirectionUtils.getIcon(currentNode.x - x, currentNode.y - y);
                 MazeItem nextMove = fov.getItem(currentNode.x, currentNode.y);
 
-                if (nextMove != target && nextMove.getClass() != Enemy.class) {
+                if (nextMove == target) {
                     x = currentNode.x;
                     y = currentNode.y;
+                    return true;
+                } else if (nextMove.getClass() != Enemy.class) {
+                    x = currentNode.x;
+                    y = currentNode.y;
+                    return false;
                 }
             }
 
@@ -71,6 +76,8 @@ public class Enemy extends MazeItem {
                 }
             }
         }
+
+        return false;
     }
 
     private static class Node implements Comparable{

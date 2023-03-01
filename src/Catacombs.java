@@ -13,20 +13,19 @@ public class Catacombs  implements ActionListener {
 
     Catacombs(int cellSize, int numCells) {
         JFrame j = new JFrame("Catacombs");
-        j.add(new JLabel());
-        j.addKeyListener(new KeyTracker());
         j.setSize(340, 450);
         j.setLocation(600,250);
         j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         j.setVisible(true);
 
-        Tile[][] worldMap = MazeBuilder.buildMaze(cellSize, numCells);
+        KeyTracker keyLog = new KeyTracker();
+        j.addKeyListener(keyLog);
 
         player = new Player(4, 4);
         enemies = new ArrayList<>();
-
         Enemy.setTarget(player);
 
+        Tile[][] worldMap = MazeBuilder.buildMaze(cellSize, numCells);
         fov = new FOV(j, worldMap, 21);
         fov.focus(player, enemies);
         fov.display();

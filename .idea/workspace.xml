@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ccd77610-15ec-41c9-9b57-6c07e71b60c8" name="Changes" comment="Colors added">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2_28_2023_4_02_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2_28_2023_4_02_PM__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_3_1_2023_11_10_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_3_1_2023_11_10_AM__Changes_.xml" afterDir="false" />
+    <list default="true" id="ccd77610-15ec-41c9-9b57-6c07e71b60c8" name="Changes" comment="Colors in development">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Catacombs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Catacombs.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Enemy.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FOV.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FOV.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -149,7 +150,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677692102634</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Colors in development">
+      <created>1677692893599</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1677692893599</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -174,7 +182,8 @@
     <MESSAGE value="Swing integration complete." />
     <MESSAGE value="Try Implementing A*&#10;https://medium.com/akatsuki-taiwan-technology/a-pathfinding-algorithm-in-2d-grid-11f5a5354cc2" />
     <MESSAGE value="Colors added" />
-    <option name="LAST_COMMIT_MESSAGE" value="Colors added" />
+    <MESSAGE value="Colors in development" />
+    <option name="LAST_COMMIT_MESSAGE" value="Colors in development" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
