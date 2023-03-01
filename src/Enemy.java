@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class Enemy implements MazeItem {
     private static Player target;
 
+    private boolean moveTurn;
     private int x, y;
     private char icon;
 
@@ -10,6 +11,7 @@ public class Enemy implements MazeItem {
         this.x = x;
         this.y = y;
         icon = '>';
+        moveTurn = false;
     }
 
     public int x() {
@@ -21,7 +23,7 @@ public class Enemy implements MazeItem {
     }
 
     public String toString() {
-        return (char) 27 + "[31m" + icon + (char) 27 + "[39m";
+        return String.valueOf(icon);
     }
 
     @Override
@@ -34,6 +36,9 @@ public class Enemy implements MazeItem {
     }
 
     public void move(FOV fov) {
+        moveTurn = !moveTurn;
+        if (moveTurn) return;
+
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
         Node start = new Node(x, y);

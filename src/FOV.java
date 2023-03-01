@@ -1,17 +1,49 @@
+import java.awt.font.TextAttribute;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.*;
+public class FOV extends JFrame {
 
-public class FOV {
+    private final JTextArea display;
+    private final JFrame j;
     private final Tile[][] worldMap;
     private final int viewRange;
     private final int[] frame;
     private final MazeItem[][] fov;
 
-    public FOV(Tile[][] worldMap, int viewRange) {
+    public FOV(JFrame j, Tile[][] worldMap, int viewRange) {
+        this.j = j;
+        display = new JTextArea();
+        setUpGraphics();
+
         this.worldMap = worldMap;
         this.viewRange = viewRange;
         frame = new int[4];
         fov = new MazeItem[viewRange][viewRange];
     }
+
+    private void setUpGraphics() {
+        Font font;
+        try {
+            font = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\sethv\\IdeaProjects\\MazeDungeon\\JetBrainsMonoNL-ExtraBold.ttf")).deriveFont(12f);
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Map<TextAttribute, Object> attributes = new HashMap<>();
+        attributes.put(TextAttribute.TRACKING, 0.5);
+
+        display.setFont(font.deriveFont(attributes));
+        display.setEnabled(false);
+
+        j.add(display);
+        j.setVisible(true);
+    }
+
 
     private boolean withinFrame(Enemy enemy) {
         return (frame[0] <= enemy.x() && enemy.x() <= frame[1]) && (frame[2] <= enemy.y() && enemy.y() <= frame[3]);
@@ -57,19 +89,19 @@ public class FOV {
     }
 
     public void display() {
-        StringBuilder printer = new StringBuilder("\n".repeat(0));
-        String outerBarrier = (char) 27 + "[36mX" + (char) 27 + "[39m ";
+        StringBuilder printer = new StringBuilder();
 
-        printer.append(outerBarrier.repeat(fov.length + 2)).append("\n");
+        printer.append("X".repeat(fov.length + 2)).append("\n");
         for (MazeItem[] row : fov) {
-            printer.append(outerBarrier);
+            printer.append("X");
             for (MazeItem column : row) {
-                printer.append(column).append(" ");
+                printer.append(column);
             }
-            printer.append(outerBarrier).append("\n");
+            printer.append("X").append("\n");
         }
-        printer.append(outerBarrier.repeat(fov.length + 2));
-        System.out.println(printer);
+        printer.append("X".repeat(fov.length + 2));
+
+        display.setText(printer.toString());
     }
 
     public void generateEnemies(ArrayList<Enemy> enemies) {
@@ -99,4 +131,6 @@ public class FOV {
     private int adjustedY(Enemy enemy) {
         return enemy.y() - frame[2];
     }
+
+
 }
