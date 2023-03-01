@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ccd77610-15ec-41c9-9b57-6c07e71b60c8" name="Changes" comment="Colors in development">
+    <list default="true" id="ccd77610-15ec-41c9-9b57-6c07e71b60c8" name="Changes" comment="Death sort of in the game now">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Catacombs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Catacombs.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Enemy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FOV.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FOV.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tile.java" afterDir="false" />
     </list>
@@ -157,7 +155,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677692893599</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Death sort of in the game now">
+      <created>1677693734922</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1677693734922</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -183,7 +188,8 @@
     <MESSAGE value="Try Implementing A*&#10;https://medium.com/akatsuki-taiwan-technology/a-pathfinding-algorithm-in-2d-grid-11f5a5354cc2" />
     <MESSAGE value="Colors added" />
     <MESSAGE value="Colors in development" />
-    <option name="LAST_COMMIT_MESSAGE" value="Colors in development" />
+    <MESSAGE value="Death sort of in the game now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Death sort of in the game now" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 public class Enemy extends MazeItem {
     private static Player target;
 
-    private boolean moveTurn;
+    private int turn;
     private int x, y;
 
     Enemy(int x, int y) {
         this.x = x;
         this.y = y;
-        moveTurn = false;
+        turn = -3;
 
         color = Color.RED;
         icon = '>';
@@ -30,8 +30,11 @@ public class Enemy extends MazeItem {
     }
 
     public boolean move(FOV fov) {
-        moveTurn = !moveTurn;
-        if (moveTurn) return false;
+        if (turn != 1) {
+            turn++;
+            return false;
+        }
+        turn = 0;
 
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
