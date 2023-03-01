@@ -5,19 +5,25 @@ import java.util.ArrayList;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+
 public class FOV extends JFrame {
 
-    private final JTextArea display;
-    private final JFrame j;
+    private final JTextPane display;
     private final Tile[][] worldMap;
     private final int viewRange;
     private final int[] frame;
     private final MazeItem[][] fov;
 
     public FOV(JFrame j, Tile[][] worldMap, int viewRange) {
-        this.j = j;
-        display = new JTextArea();
+        display = new JTextPane();
+        j.add(display);
+
         setUpGraphics();
 
         this.worldMap = worldMap;
@@ -28,20 +34,22 @@ public class FOV extends JFrame {
 
     private void setUpGraphics() {
         Font font;
+        String fontName = "JetBrainsMonoNL-ExtraBold.ttf";
+        File fontFile = new File(Objects.requireNonNull(getClass().getResource(fontName)).getPath());
+
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getResource("JetBrainsMonoNL-ExtraBold.ttf").getPath())).deriveFont(12f);
+            font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(12f);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
 
         Map<TextAttribute, Object> attributes = new HashMap<>();
         attributes.put(TextAttribute.TRACKING, 0.5);
-
         display.setFont(font.deriveFont(attributes));
-        //display.setFocusable(false);
-        display.setEnabled(false);
 
-        j.add(display);
+        display.setFocusable(false);
+        //display.setEnabled(false);
+
     }
 
     private boolean withinFrame(Enemy enemy) {
@@ -88,19 +96,17 @@ public class FOV extends JFrame {
     }
 
     public void display() {
-        StringBuilder printer = new StringBuilder();
+        display.setText("");
 
-        printer.append("X".repeat(fov.length + 2)).append("\n");
+        appendToPane(display, "X".repeat(fov.length + 2) + "\n", Color.BLACK);
         for (MazeItem[] row : fov) {
-            printer.append("X");
+            appendToPane(display, "X", Color.BLACK);
             for (MazeItem column : row) {
-                printer.append(column);
+                appendToPane(display, column.getIcon(), column.getColor());
             }
-            printer.append("X").append("\n");
+            appendToPane(display, "X\n", Color.BLACK);
         }
-        printer.append("X".repeat(fov.length + 2));
-
-        display.setText(printer.toString());
+        appendToPane(display, "X".repeat(fov.length + 2), Color.BLACK);
     }
 
     public void generateEnemies(ArrayList<Enemy> enemies) {
@@ -123,6 +129,12 @@ public class FOV extends JFrame {
         return inBoundsX && inBoundsY && fov[y][x].isPassable();
     }
 
+    public MazeItem getItem(int x, int y) {
+        x -= frame[0];
+        y -= frame[2];
+        return fov[y][x];
+    }
+
     private int adjustedX(Enemy enemy) {
         return enemy.x() - frame[0];
     }
@@ -130,5 +142,16 @@ public class FOV extends JFrame {
     private int adjustedY(Enemy enemy) {
         return enemy.y() - frame[2];
     }
+    private void appendToPane(JTextPane tp, String msg, Color c)
+    {
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
+        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+
+        int len = tp.getDocument().getLength();
+        tp.setCaretPosition(len);
+        tp.setCharacterAttributes(aset, false);
+        tp.replaceSelection(msg);
+    }
 }

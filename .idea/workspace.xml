@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ccd77610-15ec-41c9-9b57-6c07e71b60c8" name="Changes" comment="Swing integration complete.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2_28_2023_4_02_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2_28_2023_4_02_PM__Changes_.xml" afterDir="false" />
+    <list default="true" id="ccd77610-15ec-41c9-9b57-6c07e71b60c8" name="Changes" comment="Try Implementing A*&#10;https://medium.com/akatsuki-taiwan-technology/a-pathfinding-algorithm-in-2d-grid-11f5a5354cc2">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JetBrainsMonoNL-ExtraBold.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/src/JetBrainsMonoNL-ExtraBold.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Enemy.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FOV.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FOV.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MazeItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MazeItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +53,9 @@
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\BT_3W2_20\IdeaProjects\Catecombs\src" />
     </key>
   </component>
   <component name="RunManager">
@@ -123,7 +130,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677638676194</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Try Implementing A*&#10;https://medium.com/akatsuki-taiwan-technology/a-pathfinding-algorithm-in-2d-grid-11f5a5354cc2">
+      <created>1677687450979</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1677687450979</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -146,7 +160,8 @@
     <MESSAGE value="Implementation of A* almost complete" />
     <MESSAGE value="Implementation of A* complete with quicksort." />
     <MESSAGE value="Swing integration complete." />
-    <option name="LAST_COMMIT_MESSAGE" value="Swing integration complete." />
+    <MESSAGE value="Try Implementing A*&#10;https://medium.com/akatsuki-taiwan-technology/a-pathfinding-algorithm-in-2d-grid-11f5a5354cc2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Try Implementing A*&#10;https://medium.com/akatsuki-taiwan-technology/a-pathfinding-algorithm-in-2d-grid-11f5a5354cc2" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -1,17 +1,20 @@
+import java.awt.*;
 import java.util.ArrayList;
 
-public class Enemy implements MazeItem {
+public class Enemy extends MazeItem {
     private static Player target;
 
     private boolean moveTurn;
     private int x, y;
-    private char icon;
 
     Enemy(int x, int y) {
         this.x = x;
         this.y = y;
-        icon = '>';
         moveTurn = false;
+
+        color = Color.RED;
+        icon = '>';
+        isPassable = true;
     }
 
     public int x() {
@@ -20,15 +23,6 @@ public class Enemy implements MazeItem {
 
     public int y() {
         return y;
-    }
-
-    public String toString() {
-        return String.valueOf(icon);
-    }
-
-    @Override
-    public boolean isPassable() {
-        return false;
     }
 
     public static void setTarget(Player target) {
@@ -56,12 +50,16 @@ public class Enemy implements MazeItem {
                 }
 
                 icon = DirectionUtils.getIcon(currentNode.x - x, currentNode.y - y);
-                x = currentNode.x;
-                y = currentNode.y;
+                MazeItem nextMove = fov.getItem(currentNode.x, currentNode.y);
+
+                if (nextMove != target && nextMove.getClass() != Enemy.class) {
+                    x = currentNode.x;
+                    y = currentNode.y;
+                }
             }
 
             for (Node neighbor : currentNode.getNeighbors(fov, closedSet)) {
-                int cost = currentNode.cost + getCost(neighbor);
+                int cost = currentNode.cost + neighbor.getCost();
 
                 if (cost < neighbor.cost || closedSet.contains(neighbor)) {
                     neighbor.setCost(cost);
@@ -75,11 +73,6 @@ public class Enemy implements MazeItem {
         }
     }
 
-    public int getCost(Node node) {
-        return Math.abs(node.x - target.x()) + Math.abs(node.y - target.y());
-    }
-
-
     private static class Node implements Comparable{
         private final int x, y;
         private int cost;
@@ -90,6 +83,10 @@ public class Enemy implements MazeItem {
             this.y = y;
             cost = Integer.MAX_VALUE;
             parent = null;
+        }
+
+        public int getCost() {
+            return Math.abs(x - target.x()) + Math.abs(y - target.y());
         }
 
         public void setCost(int cost) {

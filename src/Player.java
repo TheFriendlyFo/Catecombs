@@ -1,10 +1,14 @@
+import java.awt.*;
 
-public class Player implements MazeItem {
+public class Player extends MazeItem {
     private int x, y;
 
     Player(int x, int y) {
         this.x = x;
         this.y = y;
+        icon = '0';
+        color = Color.BLUE;
+        isPassable = true;
     }
 
     public int x() {
@@ -13,15 +17,6 @@ public class Player implements MazeItem {
 
     public int y() {
         return y;
-    }
-
-    public String toString() {
-        return "0";
-    }
-
-    @Override
-    public boolean isPassable() {
-        return true;
     }
 
     public void move(FOV fov, int moveX, int moveY) {
