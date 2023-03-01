@@ -23,7 +23,6 @@ public class FOV extends JFrame {
     public FOV(JFrame j, Tile[][] worldMap, int viewRange) {
         display = new JTextPane();
         j.add(display);
-
         setUpGraphics();
 
         this.worldMap = worldMap;
@@ -34,7 +33,7 @@ public class FOV extends JFrame {
 
     private void setUpGraphics() {
         Font font;
-        String fontName = "JetBrainsMonoNL-ExtraBold.ttf";
+        String fontName = "JetBrainsMonoNL-Light.ttf";
         File fontFile = new File(Objects.requireNonNull(getClass().getResource(fontName)).getPath());
 
         try {
@@ -48,8 +47,6 @@ public class FOV extends JFrame {
         display.setFont(font.deriveFont(attributes));
 
         display.setFocusable(false);
-        //display.setEnabled(false);
-
     }
 
     private boolean withinFrame(Enemy enemy) {
