@@ -15,8 +15,10 @@ public class Catacombs  implements ActionListener {
         JFrame j = new JFrame("Catacombs");
         j.add(new JLabel());
         j.addKeyListener(new KeyTracker());
-        j.setSize(500, 500);
+        j.setSize(340, 450);
+        j.setLocation(600,250);
         j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        j.setVisible(true);
 
         Tile[][] worldMap = MazeBuilder.buildMaze(cellSize, numCells);
 
@@ -28,10 +30,6 @@ public class Catacombs  implements ActionListener {
         fov = new FOV(j, worldMap, 21);
         fov.focus(player, enemies);
         fov.display();
-    }
-
-    public void update() {
-
     }
 
     @Override

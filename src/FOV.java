@@ -38,12 +38,11 @@ public class FOV extends JFrame {
         attributes.put(TextAttribute.TRACKING, 0.5);
 
         display.setFont(font.deriveFont(attributes));
+        //display.setFocusable(false);
         display.setEnabled(false);
 
         j.add(display);
-        j.setVisible(true);
     }
-
 
     private boolean withinFrame(Enemy enemy) {
         return (frame[0] <= enemy.x() && enemy.x() <= frame[1]) && (frame[2] <= enemy.y() && enemy.y() <= frame[3]);
@@ -131,6 +130,5 @@ public class FOV extends JFrame {
     private int adjustedY(Enemy enemy) {
         return enemy.y() - frame[2];
     }
-
 
 }

@@ -44,7 +44,6 @@ public class Enemy implements MazeItem {
         Node start = new Node(x, y);
         start.setCost(0);
         openSet.add(start);
-        int iterations = 0;
 
         while (openSet.size() > 0) {
             QuickSort.sort(openSet);
@@ -73,9 +72,7 @@ public class Enemy implements MazeItem {
                     }
                 }
             }
-            iterations++;
         }
-        System.out.println(iterations);
     }
 
     public int getCost(Node node) {
