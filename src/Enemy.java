@@ -3,7 +3,6 @@ import java.util.ArrayList;
 
 public class Enemy extends MazeItem {
     private static Player target;
-
     private int turn;
     private int x, y;
 
@@ -83,7 +82,7 @@ public class Enemy extends MazeItem {
         return false;
     }
 
-    private static class Node implements Comparable{
+    private static class Node implements QuickSort.Comparable{
         private final int x, y;
         private int cost;
         private Node parent;
@@ -111,10 +110,10 @@ public class Enemy extends MazeItem {
             ArrayList<Node> neighbors = new ArrayList<>();
 
             for (int i = 0; i < 4; i++) {
-                int neighborX = DirectionUtils.getX(x, i);
+                int neighborX = Math.floorMod(DirectionUtils.getX(x, i), );
                 int neighborY = DirectionUtils.getY(y, i);
 
-                if (!fov.isPassable(neighborX, neighborY)) continue;
+                if (!fov.getItem(neighborX, neighborY).isPassable()) continue;
 
                 Node neighbor = new Node(neighborX, neighborY);
                 if (!closedSet.contains(neighbor)) neighbors.add(neighbor);
@@ -132,10 +131,9 @@ public class Enemy extends MazeItem {
         }
 
         @Override
-        public int compareTo(Comparable compare) {
+        public int compareTo(QuickSort.Comparable compare) {
             Node node = (Node) compare;
             return Integer.compare(cost, node.cost);
         }
-
     }
 }

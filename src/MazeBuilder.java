@@ -13,6 +13,7 @@ public class MazeBuilder {
     }
 
     private static boolean mazeAlgorithm(Cell[][] maze, int mazeSize, int x, int y, int depth) {
+        System.out.printf("(%s, %s):\n", x, y);
         maze[y][x].populate(depth);
         if (cellsAccessed > mazeSize * mazeSize) return true;
 
@@ -22,11 +23,15 @@ public class MazeBuilder {
         while (!checkComplete) {
             possibilities.clear();
             for (int ang = 0; ang < 4; ang ++) {
-                int newX = DirectionUtils.getX(x, ang);
-                int newY = DirectionUtils.getY(y, ang);
+                int newX = Math.floorMod(DirectionUtils.getX(x, ang), mazeSize);
+                int newY = Math.floorMod(DirectionUtils.getY(y, ang), mazeSize);
+                System.out.printf("(%s, %s)\n", newX, newY);
+                System.out.println(maze[newX][newY].isAccessed());
 
-                if (validCell(maze, newX, newY)) possibilities.add(new Vector(newX, newY, ang));
+
+                if (!maze[newY][newX].isAccessed()) possibilities.add(new Vector(newX, newY, ang));
             }
+            System.out.println();
 
             if (possibilities.size() > 0) {
                 Vector vector = possibilities.get((int) (Math.random() * possibilities.size()));
@@ -61,26 +66,18 @@ public class MazeBuilder {
         return cells;
     }
 
-    private static boolean validCell(Cell[][] maze, int x, int y) {
-        return (0 <= x && x < maze.length) && (0 <= y && y < maze.length) && !maze[y][x].isAccessed();
-    }
-
     private static Tile[][] convertToTileArray(Cell[][] cellMaze, int cellSize, int mazeSize) {
-        Tile[][] tileMaze = new Tile[1 + cellSize * mazeSize][1 + cellSize * mazeSize];
-        Arrays.fill(tileMaze[0], Tile.BARRIER);
+        Tile[][] tileMaze = new Tile[cellSize * mazeSize][cellSize * mazeSize];
 
         for (int y = 0; y < mazeSize; y++) {
             for (int cellRow = 0; cellRow < cellSize; cellRow++) {
-                tileMaze[y * cellSize + cellRow][0] = Tile.BARRIER;
                 for (int cellNum = 0; cellNum < mazeSize; cellNum++) {
                     for (int tileNum = 0; tileNum < cellSize; tileNum++) {
-                        tileMaze[y * cellSize + cellRow + 1][cellNum * cellSize + tileNum + 1] = cellMaze[y][cellNum].getRow(cellRow)[tileNum];
+                        tileMaze[y * cellSize + cellRow][cellNum * cellSize + tileNum] = cellMaze[y][cellNum].getRow(cellRow)[tileNum];
                     }
                 }
             }
         }
-
-        tileMaze[tileMaze.length - 1][0] = Tile.BARRIER;
 
         return tileMaze;
     }

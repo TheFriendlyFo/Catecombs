@@ -28,7 +28,7 @@ public class Catacombs  implements ActionListener {
         Tile[][] worldMap = MazeBuilder.buildMaze(cellSize, numCells);
         fov = new FOV(j, worldMap, 21);
         fov.focus(player, enemies);
-        fov.display();
+        fov.updateDisplay();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Catacombs  implements ActionListener {
             fov.focus(player, enemies);
             fov.updateEnemies(enemies);
             fov.generateEnemies(enemies);
-            fov.display();
+            fov.updateDisplay();
         }
 
     }
