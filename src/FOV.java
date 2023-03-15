@@ -16,10 +16,10 @@ public class FOV extends JFrame {
 
     private final JFrame jFrame;
     private final JTextPane display;
-    private final MazeItem[][] fov;
     private final Tile[][] worldMap;
     private final int viewRange;
-    private int lowXBound, lowYBound;
+    private final int[] frame;
+    private final MazeItem[][] fov;
 
     public FOV(JFrame j, Tile[][] worldMap, int viewRange) {
         display = new JTextPane();
@@ -28,7 +28,8 @@ public class FOV extends JFrame {
         setUpGraphics();
 
         this.worldMap = worldMap;
-        this.viewRange = viewRange - 1;
+        this.viewRange = viewRange;
+        frame = new int[4];
         fov = new MazeItem[viewRange][viewRange];
     }
 
@@ -50,56 +51,52 @@ public class FOV extends JFrame {
         display.setFocusable(false);
     }
 
-    public boolean withinFrame(Enemy enemy) {
-        return (lowXBound <= enemy.x() && enemy.x() <= lowXBound + viewRange)
-                && (lowYBound <= enemy.y() && enemy.y() <= lowYBound + viewRange);
+    private boolean withinFrame(Enemy enemy) {
+        return (frame[0] <= enemy.x() && enemy.x() <= frame[1]) && (frame[2] <= enemy.y() && enemy.y() <= frame[3]);
     }
 
-    private void centerOn(Player player) {
-        int r = (viewRange + 1) / 2;
-        lowXBound = player.x() - r;
-        lowYBound = player.y() - r;
-    }
+    private void focusFrame(Player player) {
+        int x = player.x(), y = player.y();
+        int r = viewRange / 2;
 
-    public MazeItem getItem(int x, int y) {
-        x -= lowXBound;
-        y -= lowYBound;
-        return fov[y][x];
+        frame[0] = Math.max(x - r, 0) - (x + r >= worldMap.length ? r + x - worldMap.length + 1 : 0);
+        frame[1] = frame[0] + viewRange - 1;
+        frame[2] = Math.max(y - r, 0) - (y + r >= worldMap.length ? r + y - worldMap.length + 1 : 0);
+        frame[3] = frame[2] + viewRange - 1;
     }
 
     public void focus(Player player, ArrayList<Enemy> enemies) {
-        centerOn(player);
+        focusFrame(player);
 
-        for (int row = lowYBound; row <= lowYBound + viewRange; row++) {
-            for (int col = lowXBound; col <= lowXBound + viewRange; col++) {
-                fov[row - lowYBound][col - lowXBound] = worldMap[Math.floorMod(row, worldMap.length)][Math.floorMod(col, worldMap.length)];
-            }
+        for (int yi = frame[2]; yi <= frame[3]; yi++) {
+            if (frame[1] + 1 - frame[0] >= 0)
+                System.arraycopy(worldMap[yi], frame[0], fov[yi - frame[2]], 0, frame[1] + 1 - frame[0]);
         }
 
         for (Enemy enemy : enemies) {
             if (withinFrame(enemy)) {
-                fov[enemy.y() - lowYBound][enemy.x() - lowXBound] = enemy;
+                fov[adjustedY(enemy)][adjustedX(enemy)] = enemy;
             }
         }
 
-        fov[player.y() - lowYBound][player.x() - lowXBound] = player;
+        fov[player.y() - frame[2]][player.x() - frame[0]] = player;
     }
 
     public void updateEnemies(ArrayList<Enemy> enemies) {
         for (Enemy enemy : enemies) {
             if (!withinFrame(enemy)) continue;
 
-            fov[enemy.y() - lowYBound][enemy.x() - lowXBound] = worldMap[enemy.y()][enemy.x()];
+            fov[adjustedY(enemy)][adjustedX(enemy)] = worldMap[enemy.y()][enemy.x()];
 
-            if (enemy.move(this)) jFrame.removeKeyListener(jFrame.getKeyListeners()[0]);
+            if (enemy.move()) jFrame.removeKeyListener(jFrame.getKeyListeners()[0]);
 
             if (withinFrame(enemy)) {
-                fov[enemy.y() - lowYBound][enemy.x() - lowXBound] = enemy;
+                fov[adjustedY(enemy)][adjustedX(enemy)] = enemy;
             }
         }
     }
 
-    public void updateDisplay() {
+    public void display() {
         display.setText("");
 
         appendToPane(display, "X".repeat(fov.length + 2) + "\n", Color.BLACK);
@@ -113,6 +110,39 @@ public class FOV extends JFrame {
         appendToPane(display, "X".repeat(fov.length + 2), Color.BLACK);
     }
 
+    public void generateEnemies(ArrayList<Enemy> enemies) {
+        for (int y = 0; y < fov.length; y++) {
+            for (int x = 0; x < fov.length; x++) {
+                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.001) {
+                    Enemy newEnemy = new Enemy(this, x + frame[0], y + frame[2]);
+                    enemies.add(newEnemy);
+                    fov[y][x] = newEnemy;
+                }
+            }
+        }
+    }
+
+    public boolean isPassable(int x, int y) {
+        x -= frame[0];
+        y -= frame[2];
+        boolean inBoundsX = (0 <= x && x < fov.length);
+        boolean inBoundsY = (0 <= y && y < fov.length);
+        return inBoundsX && inBoundsY && fov[y][x].isPassable();
+    }
+
+    public MazeItem getItem(int x, int y) {
+        x -= frame[0];
+        y -= frame[2];
+        return fov[y][x];
+    }
+
+    private int adjustedX(Enemy enemy) {
+        return enemy.x() - frame[0];
+    }
+
+    private int adjustedY(Enemy enemy) {
+        return enemy.y() - frame[2];
+    }
     private void appendToPane(JTextPane tp, String msg, Color c) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet set = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
@@ -125,15 +155,7 @@ public class FOV extends JFrame {
         tp.replaceSelection(msg);
     }
 
-    public void generateEnemies(ArrayList<Enemy> enemies) {
-        for (int y = 0; y < fov.length; y++) {
-            for (int x = 0; x < fov.length; x++) {
-                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.001) {
-                    Enemy newEnemy = new Enemy(x + lowXBound, y + lowYBound);
-                    enemies.add(newEnemy);
-                    fov[y][x] = newEnemy;
-                }
-            }
-        }
+    public int getMapSize() {
+        return worldMap.length;
     }
 }

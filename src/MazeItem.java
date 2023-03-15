@@ -1,9 +1,9 @@
 import java.awt.*;
 
 public class MazeItem {
-    public char icon;
-    public Color color;
-    public boolean isPassable;
+    char icon;
+    Color color;
+    boolean isPassable;
     public boolean isPassable() {
         return isPassable;
     }

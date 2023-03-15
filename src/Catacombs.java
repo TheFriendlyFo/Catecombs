@@ -21,14 +21,14 @@ public class Catacombs  implements ActionListener {
         KeyTracker keyLog = new KeyTracker();
         j.addKeyListener(keyLog);
 
-        player = new Player(4, 4);
-        enemies = new ArrayList<>();
-        Enemy.setTarget(player);
 
+        enemies = new ArrayList<>();
         Tile[][] worldMap = MazeBuilder.buildMaze(cellSize, numCells);
         fov = new FOV(j, worldMap, 21);
+        player = new Player(fov.getMapSize()/2, fov.getMapSize()/2);
+        Enemy.setTarget(player);
         fov.focus(player, enemies);
-        fov.updateDisplay();
+        fov.display();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Catacombs  implements ActionListener {
             fov.focus(player, enemies);
             fov.updateEnemies(enemies);
             fov.generateEnemies(enemies);
-            fov.updateDisplay();
+            fov.display();
         }
 
     }

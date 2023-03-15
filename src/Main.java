@@ -1,5 +1,5 @@
 public class Main {
     public static void main(String[] args) {
-        Catacombs catacombs = new Catacombs(8, 7);
+        Catacombs catacombs = new Catacombs(8, 81);
     }
 }

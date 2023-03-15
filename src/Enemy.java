@@ -1,12 +1,17 @@
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Enemy extends MazeItem {
+public class Enemy extends MazeItem implements ActionListener {
     private static Player target;
+    private final FOV fov;
     private int turn;
     private int x, y;
 
-    Enemy(int x, int y) {
+    Enemy(FOV fov, int x, int y) {
+        this.fov = fov;
         this.x = x;
         this.y = y;
         turn = -3;
@@ -14,6 +19,8 @@ public class Enemy extends MazeItem {
         color = Color.RED;
         icon = '>';
         isPassable = false;
+        Timer timer = new Timer(200, null);
+        timer.start();
     }
 
     public int x() {
@@ -28,12 +35,11 @@ public class Enemy extends MazeItem {
         Enemy.target = target;
     }
 
-    public boolean move(FOV fov) {
-        if (turn != 1) {
+    public boolean move() {
+        if (turn < 0) {
             turn++;
             return false;
         }
-        turn = 0;
 
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
@@ -65,7 +71,7 @@ public class Enemy extends MazeItem {
                 }
             }
 
-            for (Node neighbor : currentNode.getNeighbors(fov, closedSet)) {
+            for (Node neighbor : currentNode.getNeighbors(closedSet)) {
                 int cost = currentNode.cost + neighbor.getCost();
 
                 if (cost < neighbor.cost || closedSet.contains(neighbor)) {
@@ -82,7 +88,13 @@ public class Enemy extends MazeItem {
         return false;
     }
 
-    private static class Node implements QuickSort.Comparable{
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        move();
+        fov.focus(target, );
+    }
+
+    private class Node implements Comparable{
         private final int x, y;
         private int cost;
         private Node parent;
@@ -106,14 +118,14 @@ public class Enemy extends MazeItem {
             this.parent = parent;
         }
 
-        public ArrayList<Node> getNeighbors(FOV fov, ArrayList<Node> closedSet) {
+        public ArrayList<Node> getNeighbors(ArrayList<Node> closedSet) {
             ArrayList<Node> neighbors = new ArrayList<>();
 
             for (int i = 0; i < 4; i++) {
-                int neighborX = Math.floorMod(DirectionUtils.getX(x, i), );
+                int neighborX = DirectionUtils.getX(x, i);
                 int neighborY = DirectionUtils.getY(y, i);
 
-                if (!fov.getItem(neighborX, neighborY).isPassable()) continue;
+                if (!fov.isPassable(neighborX, neighborY)) continue;
 
                 Node neighbor = new Node(neighborX, neighborY);
                 if (!closedSet.contains(neighbor)) neighbors.add(neighbor);
@@ -131,9 +143,10 @@ public class Enemy extends MazeItem {
         }
 
         @Override
-        public int compareTo(QuickSort.Comparable compare) {
+        public int compareTo(Comparable compare) {
             Node node = (Node) compare;
             return Integer.compare(cost, node.cost);
         }
+
     }
 }
