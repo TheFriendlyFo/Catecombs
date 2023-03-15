@@ -1,25 +1,29 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Enemy extends MazeItem implements ActionListener {
+public class Enemy extends MazeItem {
     private static Player target;
-    private final FOV fov;
+    private static FOV fov;
     private int turn;
     private int x, y;
 
-    Enemy(FOV fov, int x, int y) {
-        this.fov = fov;
+    Enemy(int x, int y) {
         this.x = x;
         this.y = y;
-        turn = -3;
+        turn = -1;
 
         color = Color.RED;
         icon = '>';
         isPassable = false;
-        Timer timer = new Timer(200, null);
+
+        Timer timer = new Timer(600, e -> {
+            if (!fov.withinFrame(this)) return;
+            move();
+            fov.focus();
+            fov.display();
+
+        });
         timer.start();
     }
 
@@ -34,12 +38,13 @@ public class Enemy extends MazeItem implements ActionListener {
     public static void setTarget(Player target) {
         Enemy.target = target;
     }
+    public static void setFov(FOV fov) {
+        Enemy.fov = fov;
+    }
 
-    public boolean move() {
-        if (turn < 0) {
-            turn++;
-            return false;
-        }
+    public void move() {
+        turn++;
+        if (turn <= 0) return;
 
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
@@ -53,6 +58,8 @@ public class Enemy extends MazeItem implements ActionListener {
             closedSet.add(currentNode);
 
             if (currentNode.x == target.x() && currentNode.y == target.y()) {
+                if (currentNode.parent == null) fov.stop();
+
                 while (currentNode.parent != start) {
                     currentNode = currentNode.parent;
                 }
@@ -60,14 +67,10 @@ public class Enemy extends MazeItem implements ActionListener {
                 icon = DirectionUtils.getIcon(currentNode.x - x, currentNode.y - y);
                 MazeItem nextMove = fov.getItem(currentNode.x, currentNode.y);
 
-                if (nextMove == target) {
+                if (nextMove == target || nextMove.getClass() != Enemy.class) {
                     x = currentNode.x;
                     y = currentNode.y;
-                    return true;
-                } else if (nextMove.getClass() != Enemy.class) {
-                    x = currentNode.x;
-                    y = currentNode.y;
-                    return false;
+                    return;
                 }
             }
 
@@ -85,16 +88,9 @@ public class Enemy extends MazeItem implements ActionListener {
             }
         }
 
-        return false;
+        if (turn == 0) fov.delete(this);
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        move();
-        fov.focus(target, );
-    }
-
-    private class Node implements Comparable{
+    private static class Node implements QuickSort.Comparable{
         private final int x, y;
         private int cost;
         private Node parent;
@@ -143,10 +139,9 @@ public class Enemy extends MazeItem implements ActionListener {
         }
 
         @Override
-        public int compareTo(Comparable compare) {
+        public int compareTo(QuickSort.Comparable compare) {
             Node node = (Node) compare;
             return Integer.compare(cost, node.cost);
         }
-
     }
 }

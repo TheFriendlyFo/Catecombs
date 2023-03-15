@@ -19,10 +19,11 @@ public class Player extends MazeItem {
         return y;
     }
 
-    public void move(FOV fov, int moveX, int moveY) {
-        if (fov.isPassable(x + moveX, y + moveY)) {
-            x += moveX;
-            y += moveY;
-        }
+    public void incX(int inc) {
+        x += inc;
+    }
+
+    public void incY(int inc) {
+        y += inc;
     }
 }

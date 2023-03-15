@@ -2,6 +2,10 @@ import java.util.ArrayList;
 
 public class QuickSort {
 
+    public interface Comparable {
+        int compareTo(Comparable compare);
+    }
+
     public static <T extends Comparable> void sort(ArrayList<T> sortArray) {
         sort(sortArray, 0, sortArray.size() - 1);
     }

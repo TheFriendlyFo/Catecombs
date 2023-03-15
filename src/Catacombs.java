@@ -1,11 +1,9 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class Catacombs  implements ActionListener {
+public class Catacombs {
 
     private final Player player;
     private final ArrayList<Enemy> enemies;
@@ -22,33 +20,40 @@ public class Catacombs  implements ActionListener {
         j.addKeyListener(keyLog);
 
 
-        enemies = new ArrayList<>();
         Tile[][] worldMap = MazeBuilder.buildMaze(cellSize, numCells);
-        fov = new FOV(j, worldMap, 21);
-        player = new Player(fov.getMapSize()/2, fov.getMapSize()/2);
+
+        enemies = new ArrayList<>();
+        player = new Player(worldMap.length/2, worldMap.length/2);
+        fov = new FOV(player, enemies, j, worldMap, 21);
+
         Enemy.setTarget(player);
-        fov.focus(player, enemies);
+        Enemy.setFov(fov);
+
+        fov.focus();
         fov.display();
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {}
 
     public class KeyTracker extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_A -> player.move(fov,-1, 0);
-                case KeyEvent.VK_D -> player.move(fov,1, 0);
-                case KeyEvent.VK_W -> player.move(fov,0, -1);
-                case KeyEvent.VK_S -> player.move(fov,0, 1);
+                case KeyEvent.VK_A -> movePlayer(-1, 0);
+                case KeyEvent.VK_D -> movePlayer(1, 0);
+                case KeyEvent.VK_W -> movePlayer(0, -1);
+                case KeyEvent.VK_S -> movePlayer(0, 1);
             }
 
-            fov.focus(player, enemies);
-            fov.updateEnemies(enemies);
-            fov.generateEnemies(enemies);
+            fov.focus();
+            fov.generateEnemies();
             fov.display();
         }
 
+    }
+
+    public void movePlayer(int moveX, int moveY) {
+        if (fov.isPassable(player.x() + moveX, player.y() + moveY)) {
+            player.incX(moveX);
+            player.incY(moveY);
+        }
     }
 }
