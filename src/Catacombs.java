@@ -11,7 +11,7 @@ public class Catacombs {
 
     Catacombs(int cellSize, int numCells) {
         JFrame j = new JFrame("Catacombs");
-        j.setSize(340, 450);
+        j.setSize(340, 500);
         j.setLocation(600,250);
         j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         j.setVisible(true);
@@ -54,6 +54,9 @@ public class Catacombs {
         if (fov.isPassable(player.x() + moveX, player.y() + moveY)) {
             player.incX(moveX);
             player.incY(moveY);
+        }
+        for (Enemy enemy : enemies) {
+            enemy.checkCollision();
         }
     }
 }

@@ -4,6 +4,7 @@ public class MazeItem {
     char icon;
     Color color;
     boolean isPassable;
+
     public boolean isPassable() {
         return isPassable;
     }

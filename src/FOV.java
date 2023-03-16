@@ -7,15 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.*;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
+import javax.swing.text.*;
 
-public class FOV extends JFrame {
-
+public class FOV {
     private final JFrame j;
     private final JTextPane display;
+    private final SimpleAttributeSet set;
+    private final Document doc;
     private final Tile[][] worldMap;
     private final int viewRange;
     private final int[] frame;
@@ -24,8 +22,10 @@ public class FOV extends JFrame {
     private final ArrayList<Enemy> enemies;
 
     public FOV(Player player, ArrayList<Enemy> enemies, JFrame j, Tile[][] worldMap, int viewRange) {
-        display = new JTextPane();
         this.j = j;
+        display = new JTextPane();
+        doc = display.getStyledDocument();
+        set = new SimpleAttributeSet();
         j.add(display);
         setUpGraphics();
 
@@ -87,17 +87,22 @@ public class FOV extends JFrame {
     }
 
     public void display() {
+        long start = System.currentTimeMillis();
         display.setText("");
 
-        appendToPane(display, "X".repeat(fov.length + 2) + "\n", Color.BLACK);
+        appendToPane("X".repeat(fov.length + 2) + "\n", Color.BLACK);
         for (MazeItem[] row : fov) {
-            appendToPane(display, "X", Color.BLACK);
+            appendToPane("X", Color.BLACK);
             for (MazeItem column : row) {
-                appendToPane(display, column.getIcon(), column.getColor());
+                appendToPane(column.getIcon(), column.getColor());
             }
-            appendToPane(display, "X\n", Color.BLACK);
+            appendToPane("X\n", Color.BLACK);
         }
-        appendToPane(display, "X".repeat(fov.length + 2), Color.BLACK);
+        appendToPane("X".repeat(fov.length + 2) + "\n\n", Color.BLACK);
+        appendToPane("Player Stats:\n", Color.BLACK);
+        appendToPane("Health: ", Color.BLACK);
+        appendToPane("* ".repeat(Math.max(0, player.getHealth())), Color.RED);
+        System.out.println(System.currentTimeMillis() - start);
     }
 
     public void generateEnemies() {
@@ -120,12 +125,6 @@ public class FOV extends JFrame {
         return inBoundsX && inBoundsY && fov[y][x].isPassable();
     }
 
-    public MazeItem getItem(int x, int y) {
-        x -= frame[0];
-        y -= frame[2];
-        return fov[y][x];
-    }
-
     private int adjustedX(Enemy enemy) {
         return enemy.x() - frame[0];
     }
@@ -133,16 +132,15 @@ public class FOV extends JFrame {
     private int adjustedY(Enemy enemy) {
         return enemy.y() - frame[2];
     }
-    private void appendToPane(JTextPane tp, String msg, Color c) {
-        StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet set = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+    private void appendToPane(String msg, Color c) {
+        StyleConstants.setForeground(set, c);
+        display.setCharacterAttributes(set, true);
 
-        set = sc.addAttribute(set, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
-
-        int len = tp.getDocument().getLength();
-        tp.setCaretPosition(len);
-        tp.setCharacterAttributes(set, false);
-        tp.replaceSelection(msg);
+        try {
+            doc.insertString(doc.getLength(), msg, set);
+        } catch (BadLocationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void delete(Enemy enemy) {

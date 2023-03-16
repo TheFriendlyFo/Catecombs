@@ -5,24 +5,23 @@ import java.util.ArrayList;
 public class Enemy extends MazeItem {
     private static Player target;
     private static FOV fov;
-    private int turn;
     private int x, y;
+    private final Timer timer;
 
     Enemy(int x, int y) {
         this.x = x;
         this.y = y;
-        turn = -1;
 
         color = Color.RED;
         icon = '>';
         isPassable = false;
 
-        Timer timer = new Timer(800, e -> {
+        timer = new Timer(800, e -> {
             if (!fov.withinFrame(this)) return;
             move();
+            checkCollision();
             fov.focus();
             fov.display();
-
         });
         timer.start();
     }
@@ -38,15 +37,12 @@ public class Enemy extends MazeItem {
     public static void setTarget(Player target) {
         Enemy.target = target;
     }
+
     public static void setFov(FOV fov) {
         Enemy.fov = fov;
     }
 
-    //public boolean move(ArrayList<Node> openSet, ArrayList<Node> closedSet)
-
     public void move() {
-        turn++;
-        if (turn <= 0) return;
 
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
@@ -54,51 +50,49 @@ public class Enemy extends MazeItem {
         start.setCost(0);
         openSet.add(start);
 
-        while (openSet.size() > 0) {
-            QuickSort.sort(openSet);
-            Node currentNode = openSet.remove(0);
-            closedSet.add(currentNode);
+        move(openSet, closedSet);
+    }
 
-            if (currentNode.x == target.x() && currentNode.y == target.y()) {
-                while (currentNode.parent != start) {
-                    currentNode = currentNode.parent;
-                }
+    private void move(ArrayList<Node> openSet, ArrayList<Node> closedSet) {
+        if (openSet.size() == 0) return;
+        QuickSort.sort(openSet);
+        Node currentNode = openSet.remove(0);
+        closedSet.add(currentNode);
 
-                icon = DirectionUtils.getIcon(currentNode.x - x, currentNode.y - y);
-                MazeItem nextMove = fov.getItem(currentNode.x, currentNode.y);
+        if (currentNode.x == target.x() && currentNode.y == target.y()) {
+            Node moveNode = currentNode.traceBack();
 
-                if (nextMove == target || nextMove.getClass() != Enemy.class) {
-                    x = currentNode.x;
-                    y = currentNode.y;
-                    if (x == target.x() && y == target.y()) {
-                        fov.delete(this);
-                        if (target.damage()) {
-                            fov.stop();
-                        }
-                    }
-                    return;
-                }
-            }
+            icon = DirectionUtils.getIcon(moveNode.x - x, moveNode.y - y);
+            x = moveNode.x;
+            y = moveNode.y;
 
-            for (Node neighbor : currentNode.getNeighbors(closedSet)) {
-                int cost = currentNode.cost + neighbor.getCost();
+            return;
+        }
 
-                if (cost < neighbor.cost || closedSet.contains(neighbor)) {
-                    neighbor.setCost(cost);
-                    neighbor.setParent(currentNode);
+        for (Node neighbor : currentNode.getNeighbors(closedSet)) {
+            int cost = currentNode.cost + neighbor.getCost();
 
-                    if (!openSet.contains(neighbor)) {
-                        openSet.add(neighbor);
-                    }
+            if (cost < neighbor.cost || closedSet.contains(neighbor)) {
+                neighbor.setCost(cost);
+                neighbor.setParent(currentNode);
+
+                if (!openSet.contains(neighbor)) {
+                    openSet.add(neighbor);
                 }
             }
         }
 
+        move(openSet, closedSet);
+    }
+
+    public void checkCollision() {
         if (x == target.x() && y == target.y()) {
             fov.delete(this);
+            timer.stop();
             if (target.damage()) fov.stop();
         }
     }
+
     private static class Node implements QuickSort.Comparable{
         private final int x, y;
         private int cost;
@@ -137,6 +131,14 @@ public class Enemy extends MazeItem {
             }
 
             return neighbors;
+        }
+
+        public Node traceBack() {
+            Node tracker = this;
+            while (tracker.parent.parent != null) {
+                tracker = tracker.parent;
+            }
+            return tracker;
         }
 
         @Override

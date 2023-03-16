@@ -29,6 +29,10 @@ public class Player extends MazeItem {
         y += inc;
     }
 
+    public int getHealth() {
+        return health;
+    }
+
     public boolean damage() {
         health--;
         return health == 0;
