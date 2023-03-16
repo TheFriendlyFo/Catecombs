@@ -42,6 +42,8 @@ public class Enemy extends MazeItem {
         Enemy.fov = fov;
     }
 
+    //public boolean move(ArrayList<Node> openSet, ArrayList<Node> closedSet)
+
     public void move() {
         turn++;
         if (turn <= 0) return;
