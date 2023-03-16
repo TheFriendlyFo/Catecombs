@@ -7,12 +7,9 @@
     <list default="true" id="ccd77610-15ec-41c9-9b57-6c07e71b60c8" name="Changes" comment="problems">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Catacombs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Catacombs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Cell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DirectionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DirectionUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Enemy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FOV.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FOV.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/QuickSort.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/QuickSort.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +89,7 @@
       <workItem from="1678504163284" duration="2668000" />
       <workItem from="1678656319326" duration="53000" />
       <workItem from="1678735592922" duration="8910000" />
+      <workItem from="1678966311215" duration="300000" />
     </task>
     <task id="LOCAL-00001" summary="Maze generation complete">
       <created>1676063446285</created>

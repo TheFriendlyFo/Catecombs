@@ -17,7 +17,7 @@ public class Enemy extends MazeItem {
         icon = '>';
         isPassable = false;
 
-        Timer timer = new Timer(600, e -> {
+        Timer timer = new Timer(800, e -> {
             if (!fov.withinFrame(this)) return;
             move();
             fov.focus();
@@ -58,8 +58,6 @@ public class Enemy extends MazeItem {
             closedSet.add(currentNode);
 
             if (currentNode.x == target.x() && currentNode.y == target.y()) {
-                if (currentNode.parent == null) fov.stop();
-
                 while (currentNode.parent != start) {
                     currentNode = currentNode.parent;
                 }
@@ -70,6 +68,12 @@ public class Enemy extends MazeItem {
                 if (nextMove == target || nextMove.getClass() != Enemy.class) {
                     x = currentNode.x;
                     y = currentNode.y;
+                    if (x == target.x() && y == target.y()) {
+                        fov.delete(this);
+                        if (target.damage()) {
+                            fov.stop();
+                        }
+                    }
                     return;
                 }
             }
@@ -88,7 +92,10 @@ public class Enemy extends MazeItem {
             }
         }
 
-        if (turn == 0) fov.delete(this);
+        if (x == target.x() && y == target.y()) {
+            fov.delete(this);
+            if (target.damage()) fov.stop();
+        }
     }
     private static class Node implements QuickSort.Comparable{
         private final int x, y;
