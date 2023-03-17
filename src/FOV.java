@@ -79,7 +79,7 @@ public class FOV {
 
         for (Enemy enemy : enemies) {
             if (withinFrame(enemy)) {
-                fov[enemy.y() - frame[2]][enemy.y() - frame[0]] = enemy;
+                fov[enemy.y() - frame[2]][enemy.x() - frame[0]] = enemy;
             }
         }
 
