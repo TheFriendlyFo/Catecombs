@@ -106,7 +106,7 @@ public class FOV {
     public void generateEnemies() {
         for (int y = 0; y < fov.length; y++) {
             for (int x = 0; x < fov.length; x++) {
-                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.001 ) {
+                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.0075 ) {
                     Enemy newEnemy = new Enemy(x + frame[0], y + frame[2]);
                     enemies.add(newEnemy);
                     fov[y][x] = newEnemy;

@@ -27,7 +27,7 @@ public class Catacombs {
         fov.focus();
         fov.display();
 
-        Timer clock = new Timer(110, e -> tick());
+        Timer clock = new Timer(100, e -> tick());
         clock.start();
     }
 
