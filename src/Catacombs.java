@@ -1,6 +1,4 @@
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class Catacombs {
@@ -16,47 +14,31 @@ public class Catacombs {
         j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         j.setVisible(true);
 
-        KeyTracker keyLog = new KeyTracker();
-        j.addKeyListener(keyLog);
-
-
         Tile[][] worldMap = MazeBuilder.buildMaze(cellSize, numCells);
 
         enemies = new ArrayList<>();
         player = new Player(worldMap.length/2, worldMap.length/2);
         fov = new FOV(player, enemies, j, worldMap, 21);
+        player.setFov(fov);
 
         Enemy.setTarget(player);
         Enemy.setFov(fov);
 
         fov.focus();
         fov.display();
+
+        Timer clock = new Timer(110, e -> tick());
+        clock.start();
     }
 
-    public class KeyTracker extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_A -> movePlayer(-1, 0);
-                case KeyEvent.VK_D -> movePlayer(1, 0);
-                case KeyEvent.VK_W -> movePlayer(0, -1);
-                case KeyEvent.VK_S -> movePlayer(0, 1);
-            }
-
-            fov.focus();
-            fov.generateEnemies();
-            fov.display();
-        }
-
-    }
-
-    public void movePlayer(int moveX, int moveY) {
-        if (fov.isPassable(player.x() + moveX, player.y() + moveY)) {
-            player.incX(moveX);
-            player.incY(moveY);
-        }
+    private void tick() {
+        player.tick();
         for (Enemy enemy : enemies) {
-            enemy.checkCollision();
+            enemy.tick();
         }
+        fov.processDeleteQueue();
+        fov.generateEnemies();
+        fov.focus();
+        fov.display();
     }
 }

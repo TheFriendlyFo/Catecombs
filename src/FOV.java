@@ -10,19 +10,18 @@ import javax.swing.*;
 import javax.swing.text.*;
 
 public class FOV {
-    private final JFrame j;
     private final JTextPane display;
     private final SimpleAttributeSet set;
     private final Document doc;
     private final Tile[][] worldMap;
-    private final int viewRange;
     private final int[] frame;
+    private final int viewRange;
     private final MazeItem[][] fov;
     private final Player player;
     private final ArrayList<Enemy> enemies;
+    private final ArrayList<Enemy> deleteQueue;
 
     public FOV(Player player, ArrayList<Enemy> enemies, JFrame j, Tile[][] worldMap, int viewRange) {
-        this.j = j;
         display = new JTextPane();
         doc = display.getStyledDocument();
         set = new SimpleAttributeSet();
@@ -35,6 +34,7 @@ public class FOV {
         this.viewRange = viewRange;
         frame = new int[4];
         fov = new MazeItem[viewRange][viewRange];
+        deleteQueue = new ArrayList<>();
     }
 
     private void setUpGraphics() {
@@ -79,7 +79,7 @@ public class FOV {
 
         for (Enemy enemy : enemies) {
             if (withinFrame(enemy)) {
-                fov[adjustedY(enemy)][adjustedX(enemy)] = enemy;
+                fov[enemy.y() - frame[2]][enemy.y() - frame[0]] = enemy;
             }
         }
 
@@ -87,7 +87,6 @@ public class FOV {
     }
 
     public void display() {
-        long start = System.currentTimeMillis();
         display.setText("");
 
         appendToPane("X".repeat(fov.length + 2) + "\n", Color.BLACK);
@@ -102,13 +101,12 @@ public class FOV {
         appendToPane("Player Stats:\n", Color.BLACK);
         appendToPane("Health: ", Color.BLACK);
         appendToPane("* ".repeat(Math.max(0, player.getHealth())), Color.RED);
-        System.out.println(System.currentTimeMillis() - start);
     }
 
     public void generateEnemies() {
         for (int y = 0; y < fov.length; y++) {
             for (int x = 0; x < fov.length; x++) {
-                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.001) {
+                if (fov[y][x] == Tile.TALL_GRASS && Math.random() < 0.001 ) {
                     Enemy newEnemy = new Enemy(x + frame[0], y + frame[2]);
                     enemies.add(newEnemy);
                     fov[y][x] = newEnemy;
@@ -125,13 +123,6 @@ public class FOV {
         return inBoundsX && inBoundsY && fov[y][x].isPassable();
     }
 
-    private int adjustedX(Enemy enemy) {
-        return enemy.x() - frame[0];
-    }
-
-    private int adjustedY(Enemy enemy) {
-        return enemy.y() - frame[2];
-    }
     private void appendToPane(String msg, Color c) {
         StyleConstants.setForeground(set, c);
         display.setCharacterAttributes(set, true);
@@ -143,11 +134,14 @@ public class FOV {
         }
     }
 
-    public void delete(Enemy enemy) {
-        enemies.remove(enemy);
+    public void addToDeleteQueue(Enemy enemy) {
+        deleteQueue.add(enemy);
     }
 
-    public void stop() {
-        j.removeKeyListener(j.getKeyListeners()[0]);
+    public void processDeleteQueue() {
+        for (Enemy enemy : deleteQueue) {
+            enemies.remove(enemy);
+        }
+        deleteQueue.clear();
     }
 }

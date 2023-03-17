@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -6,32 +5,16 @@ public class Enemy extends MazeItem {
     private static Player target;
     private static FOV fov;
     private int x, y;
-    private final Timer timer;
+    private int tick;
 
     Enemy(int x, int y) {
+        tick = -5;
         this.x = x;
         this.y = y;
 
         color = Color.RED;
         icon = '>';
         isPassable = false;
-
-        timer = new Timer(800, e -> {
-            if (!fov.withinFrame(this)) return;
-            move();
-            checkCollision();
-            fov.focus();
-            fov.display();
-        });
-        timer.start();
-    }
-
-    public int x() {
-        return x;
-    }
-
-    public int y() {
-        return y;
     }
 
     public static void setTarget(Player target) {
@@ -42,8 +25,24 @@ public class Enemy extends MazeItem {
         Enemy.fov = fov;
     }
 
-    public void move() {
+    public int x() {
+        return x;
+    }
 
+    public int y() {
+        return y;
+    }
+
+    public void tick() {
+        tick++;
+        if (tick == 3) {
+            tick = 0;
+            move();
+            checkCollision();
+        }
+    }
+
+    public void move() {
         ArrayList<Node> openSet = new ArrayList<>();
         ArrayList<Node> closedSet = new ArrayList<>();
         Node start = new Node(x, y);
@@ -87,9 +86,8 @@ public class Enemy extends MazeItem {
 
     public void checkCollision() {
         if (x == target.x() && y == target.y()) {
-            fov.delete(this);
-            timer.stop();
-            if (target.damage()) fov.stop();
+            fov.addToDeleteQueue(this);
+            target.damage();
         }
     }
 
